@@ -1,35 +1,11 @@
-# Nu primesc notă pentru că nu am pus titlu și descriere
+### Scurtă descriere
+Acest proiect are ca scop implementarea unui joc in stilul Age Of Empires folosind concepte de Programare Orientata pe Obiecte. Age Of Empires este un Real Time Strategy (RTS) bazat pe avansarea unei societăți pe parcursul a mai multor epoci (age): Dark Age, Feudal Age, Castle Age și Imperial Age. Avansarea între epoci se face prin acumularea de materiale și clădiri care se pot folosi pentru instruirea unei armate și a "industriei" necesare menținerii armatei. Jocul are ca scop ultim cucerirea tuturor celorlalte societăți vecine pentru a deveni cea mai puternică dintre ele.
 
-### Folosiți template-ul corespunzător grupei voastre!
-
-| Laborant  | Link template                                |
-|-----------|----------------------------------------------|
-| Dragoș B  | https://github.com/Ionnier/oop-template      |
-| Tiberiu M | https://github.com/MaximTiberiu/oop-template |
-| Marius MC | https://github.com/mcmarius/oop-template     |
-
-### Important!
-
-Aveți voie cu cod generat de modele de limbaj la care nu ați contribuit semnificativ doar dacă documentați riguros acest proces.
-Codul generat pus "ca să fie"/pe care nu îl înțelegeți se punctează doar pentru puncte bonus, doar în contextul
-în care oferă funcționalități ajutătoare și doar dacă are sens.
-
-Codul din proiect trebuie să poată fi ușor de înțeles și de modificat de către altcineva. Pentru detalii, veniți la ore.
-
-O cerință nu se consideră îndeplinită dacă este realizată doar prin cod generat.
-
-- **Fără cod de umplutură/fără sens!**
-- **Fără copy-paste!**
-- **Fără variabile globale!**
-- **Fără atribute publice!**
-- **Pentru T2 și T3, fără date în cod!** Datele vor fi citite din fișier, aveți exemple destule.
-- **Obligatoriu** fișiere cu date mai multe din care să citiți, obligatoriu cu biblioteci externe: fișiere (local sau server) sau baze de date
-- obligatoriu (TBD) să integrați cel puțin două biblioteci externe pe lângă cele pentru stocare
 
 ### Tema 0
 
-- [ ] Nume proiect (poate fi schimbat ulterior)
-- [ ] Scurtă descriere a temei alese, ce v-ați propus să implementați
+- [X] Nume proiect (poate fi schimbat ulterior)
+- [X] Scurtă descriere a temei alese, ce v-ați propus să implementați
 
 ## Tema 1
 
