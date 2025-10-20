@@ -7,7 +7,7 @@ private:
     int cantitate;
 
 public:
-    Resursa(const std::string& n = "", int c = 0);
+    explicit Resursa(const std::string& n = "", int c = 0);
     Resursa(const Resursa& other);                // constructor copiere
     Resursa& operator=(const Resursa& other);     // operator=
     ~Resursa();                                   // destructor
@@ -57,19 +57,18 @@ const std::string& Resursa::getNume() const {
     return nume;
 }
 
-
-
 std::ostream& operator<<(std::ostream& os, const Resursa& r) {
     os << "Resursa: " << r.nume << " (" << r.cantitate << ")";
     return os;
 }
+
 
 class Pozitie {
 private:
     int x, y;
 
 public:
-    Pozitie(int x = 0, int y = 0);
+    explicit Pozitie(int x = 0, int y = 0);
     void muta(int dx, int dy);
     int getX() const;
     int getY() const;
@@ -218,13 +217,13 @@ Resursa& Jucator::getResursa(const std::string& numeResursa) {
             return r;
         }
     }
+    throw std::runtime_error("Resursa '" + numeResursa + "' nu exista in inventarul jucatorului.");
 }
 
 void Jucator::consumaResursa(const std::string& numeResursa, int cantitate) {
     for (Resursa& r : inventar) {
         if (r.getNume() == numeResursa) {
             r.consuma(cantitate);
-            return;
         }
     }
     // Daca nu o gaseste da eroare
