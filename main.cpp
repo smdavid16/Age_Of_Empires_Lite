@@ -14,8 +14,8 @@ public:
 
     void adauga(int val);
     void consuma(int val);
-    int getCantitate() const;
-    const std::string& getNume() const;
+    [[nodiscard]] int getCantitate() const;
+    [[nodiscard]]const std::string& getNume() const;
 
     friend std::ostream& operator<<(std::ostream& os, const Resursa& r);
 };
@@ -112,7 +112,7 @@ public:
     int getPozX() const { return poz.getX(); }
     int getPozY() const { return poz.getY(); }
 
-    std::string getNume() const;
+    const std::string& getNume() const;
 
     Resursa produce() const;
     void mutaCladirea(int dx, int dy);
@@ -131,7 +131,7 @@ Cladire::~Cladire() {
     // destructor
 }
 
-std::string Cladire::getNume() const {
+const std::string& Cladire::getNume() const{
     return nume;
 }
 
