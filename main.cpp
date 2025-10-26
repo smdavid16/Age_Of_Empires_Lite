@@ -182,7 +182,6 @@ public:
 
     // Functii getter
     [[nodiscard]] NumeEra getNumeEra() const { return nume; }
-    [[nodiscard]] int getNivel() const { return nivel; }
     [[nodiscard]] const std::string& getNumeAfisat() const { return numeAfisat; }
 };
 
@@ -197,7 +196,7 @@ public:
     explicit Jucator(const std::string& n = "");
     Resursa& getResursa(const std::string& numeResursa);
     void consumaResursa(const std::string& numeResursa, int cantitate);
-    std::string getNume() const;
+    [[nodiscard]]const std::string& getNume() const;
 
     [[nodiscard]] const Era& getEraCurenta() const { return eraCurenta; }
 
@@ -217,7 +216,7 @@ public:
 Jucator::Jucator(const std::string& n) : nume(n) {
 }
 
-std::string Jucator::getNume() const {
+const std::string& Jucator::getNume() const {
     return nume;
 }
 
@@ -392,9 +391,6 @@ private:
 
 public:
     explicit CampDeLupta(int l = 1366, int i = 768) : latime(l), inaltime(i) {}
-
-    [[nodiscard]] int getLatime() const { return latime; }
-    [[nodiscard]] int getInaltime() const { return inaltime; }
 
     [[nodiscard]] std::vector<Pozitie> calculeazaCaleSimpla(const Pozitie& start, const Pozitie& end, int pasi = 10) const;
 
