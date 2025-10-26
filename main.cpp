@@ -173,12 +173,11 @@ enum class NumeEra {
 class Era {
 private:
     NumeEra nume;
-    int nivel;
     std::string numeAfisat;
 
 public:
-    explicit Era(NumeEra n = NumeEra::ERA_PIETREI, int niv = 1, const std::string& afisat = "Era Pietrei")
-        : nume(n), nivel(niv), numeAfisat(afisat) {}
+    explicit Era(NumeEra n = NumeEra::ERA_PIETREI, const std::string& afisat = "Era Pietrei")
+        : nume(n), numeAfisat(afisat) {}
 
     // Functii getter
     [[nodiscard]] NumeEra getNumeEra() const { return nume; }
@@ -377,7 +376,7 @@ void Jucator::avansareEra() {
             return;
     }
 
-    eraCurenta = Era(eraNoua, nivelNou, numeNou);
+    eraCurenta = Era(eraNoua, numeNou);
 
     std::cout << "\n**************************************************\n";
     std::cout << "*** AVANSARE REUSITA! Jucatorul a intrat in " << eraCurenta.getNumeAfisat() << " ***\n";
