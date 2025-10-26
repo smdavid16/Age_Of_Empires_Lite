@@ -22,9 +22,7 @@ public:
 
 Resursa::Resursa(const std::string& n, int c) : nume(n), cantitate(c) {}
 
-Resursa::~Resursa() {
-    //destructor
-}
+Resursa::~Resursa() {}
 
 // Constructor de copiere
 Resursa::Resursa(const Resursa& other) : nume(other.nume), cantitate(other.cantitate) {}
@@ -164,16 +162,48 @@ std::ostream& operator<<(std::ostream& os, const Cladire& c) {
     return os;
 }
 
+// Definim Erele folosind o enumerare
+enum class NumeEra {
+    ERA_PIETREI,    // Dark Age
+    ERA_FEUDALA,    // Feudal Age
+    ERA_CAVALERILOR, // Castle Age
+    ERA_IMPERIALA  // Imperial Age
+};
+
+class Era {
+private:
+    NumeEra nume;
+    int nivel;
+    std::string numeAfisat;
+
+public:
+    explicit Era(NumeEra n = NumeEra::ERA_PIETREI, int niv = 1, const std::string& afisat = "Era Pietrei")
+        : nume(n), nivel(niv), numeAfisat(afisat) {}
+
+    // Functii getter
+    [[nodiscard]] NumeEra getNumeEra() const { return nume; }
+    [[nodiscard]] int getNivel() const { return nivel; }
+    [[nodiscard]] const std::string& getNumeAfisat() const { return numeAfisat; }
+};
+
 class Jucator {
 private:
     std::string nume;
     std::vector<Resursa> inventar;
     std::vector<Cladire> cladiri;
+    Era eraCurenta;
 
 public:
     explicit Jucator(const std::string& n = "");
     Resursa& getResursa(const std::string& numeResursa);
     void consumaResursa(const std::string& numeResursa, int cantitate);
+    std::string getNume() const;
+
+    [[nodiscard]] const Era& getEraCurenta() const { return eraCurenta; }
+
+    [[nodiscard]] std::vector<Resursa> getCostAvansare() const;
+    bool verificaConditiiAvansare() const;
+    void avansareEra();
 
     void adaugaResursa(const Resursa& r);
     void adaugaCladire(const Cladire& c);
@@ -185,7 +215,10 @@ public:
 };
 
 Jucator::Jucator(const std::string& n) : nume(n) {
-    // Inventarul si cladirile sunt vectori si se initializeaza singure
+}
+
+std::string Jucator::getNume() const {
+    return nume;
 }
 
 void Jucator::adaugaResursa(const Resursa& r) {
@@ -224,10 +257,9 @@ void Jucator::consumaResursa(const std::string& numeResursa, int cantitate) {
     for (Resursa& r : inventar) {
         if (r.getNume() == numeResursa) {
             r.consuma(cantitate);
-        }
+        }else
+            std::cout << "Resursa " << numeResursa  <<  " nu exista in inventar.";
     }
-    // Daca nu o gaseste da eroare
-    std::cout << "Resursa " << numeResursa  <<  " nu exista in inventar.";
 }
 
 void Jucator::afiseazaInventar() const {
@@ -248,7 +280,7 @@ void Jucator::afiseazaCladiri() const {
         return;
     }
     for (const Cladire& c : cladiri) {
-        std::cout << "  * " << c << "\n"; // Foloseste operator<< din Cladire
+        std::cout << "  * " << c << "\n";
     }
 }
 
@@ -258,40 +290,165 @@ std::ostream& operator<<(std::ostream& os, const Jucator& j) {
     return os;
 }
 
+std::vector<Resursa> Jucator::getCostAvansare() const {
+    std::vector<Resursa> cost;
+    switch (eraCurenta.getNumeEra()) {
+        case NumeEra::ERA_PIETREI:
+            cost.emplace_back("Lemn", 50); // Cost pentru Era Feudala
+            cost.emplace_back("Piatra", 25);
+            break;
+        case NumeEra::ERA_FEUDALA:
+            cost.emplace_back("Lemn", 100); // Cost pentru Era Cavalerilor
+            cost.emplace_back("Piatra", 75);
+            break;
+        case NumeEra::ERA_CAVALERILOR:
+            cost.emplace_back("Lemn", 200); // Cost pentru Era Imperiala
+            cost.emplace_back("Piatra", 150);
+            break;
+        case NumeEra::ERA_IMPERIALA:
+        default:
+            // Nu se poate avansa
+            break;
+    }
+    return cost;
+}
+
+bool Jucator::verificaConditiiAvansare() const {
+    std::vector<Resursa> cost = getCostAvansare();
+    if (cost.empty()) {
+        std::cout << "Jucatorul este deja in ultima era!\n";
+        return false;
+    }
+
+    bool areSuficient = true;
+    for (const auto& r_cost : cost) {
+        // Cautam resursa in inventar
+        bool gasit = false;
+        for (const auto& r_inv : inventar) {
+            if (r_inv.getNume() == r_cost.getNume() && r_inv.getCantitate() >= r_cost.getCantitate()) {
+                gasit = true;
+                break;
+            }
+        }
+        if (!gasit) {
+            std::cout << "Conditie neindeplinita: lipsesc " << r_cost.getCantitate() << " " << r_cost.getNume() << ".\n";
+            areSuficient = false;
+        }
+    }
+
+    return areSuficient;
+}
+
+void Jucator::avansareEra() {
+    if (!verificaConditiiAvansare()) {
+        std::cout << "\n--- AVANSARE ESEC --- Conditii de avansare in era nu sunt indeplinite!\n";
+        return;
+    }
+
+    std::vector<Resursa> cost = getCostAvansare();
+    for (const auto& r_cost : cost) {
+        // metoda Jucator::consumaResursa
+        this->consumaResursa(r_cost.getNume(), r_cost.getCantitate());
+    }
+
+    // 2. Treci la era urmatoare
+    NumeEra eraNoua;
+    std::string numeNou;
+    int nivelNou;
+
+    switch (eraCurenta.getNumeEra()) {
+        case NumeEra::ERA_PIETREI:
+            eraNoua = NumeEra::ERA_FEUDALA;
+            numeNou = "Era Feudala";
+            nivelNou = 2;
+            break;
+        case NumeEra::ERA_FEUDALA:
+            eraNoua = NumeEra::ERA_CAVALERILOR;
+            numeNou = "Era Cavalerilor";
+            nivelNou = 3;
+            break;
+        case NumeEra::ERA_CAVALERILOR:
+            eraNoua = NumeEra::ERA_IMPERIALA;
+            numeNou = "Era Imperiala";
+            nivelNou = 4;
+            break;
+        case NumeEra::ERA_IMPERIALA:
+        default:
+            std::cout << "\n--- AVANSARE ESEC --- Esti deja in ultima era.\n";
+            return;
+    }
+
+    eraCurenta = Era(eraNoua, nivelNou, numeNou);
+
+    std::cout << "\n**************************************************\n";
+    std::cout << "*** AVANSARE REUSITA! Jucatorul a intrat in " << eraCurenta.getNumeAfisat() << " ***\n";
+    std::cout << "**************************************************\n";
+}
+
+class CampDeLupta {
+private:
+    int latime;
+    int inaltime;
+
+public:
+    explicit CampDeLupta(int l = 1366, int i = 768) : latime(l), inaltime(i) {}
+
+    [[nodiscard]] int getLatime() const { return latime; }
+    [[nodiscard]] int getInaltime() const { return inaltime; }
+
+    [[nodiscard]] std::vector<Pozitie> calculeazaCaleSimpla(const Pozitie& start, const Pozitie& end, int pasi = 10) const;
+
+    friend std::ostream& operator<<(std::ostream& os, const CampDeLupta& c);
+};
+
+std::ostream& operator<<(std::ostream& os, const CampDeLupta& c) {
+    os << "Camp de Lupta: " << c.latime << "x" << c.inaltime << " (Rezolutie)";
+    return os;
+}
+
+
+std::vector<Pozitie> CampDeLupta::calculeazaCaleSimpla(const Pozitie& start, const Pozitie& end, int pasi) const {
+    std::vector<Pozitie> cale;
+    if (pasi < 2) pasi = 2;
+
+    int dx = end.getX() - start.getX();
+    int dy = end.getY() - start.getY();
+
+    // Calculul pasului unitar pentru x si y
+    double stepX = static_cast<double>(dx) / (pasi - 1);
+    double stepY = static_cast<double>(dy) / (pasi - 1);
+
+    for (int i = 0; i < pasi; ++i) {
+        int x = start.getX() + static_cast<int>(stepX * i);
+        int y = start.getY() + static_cast<int>(stepY * i);
+
+        cale.emplace_back(x, y);
+    }
+    return cale;
+}
 
 
 
 int main() {
-    std::cout << "--- Initial commit: Implementare Age of Empires cu OOP ---\n\n";
-
-    // 1. Creare Jucator
     Jucator j1("David");
     std::cout << j1 << "\n";
 
-    // 2. Creare Resurse  pentru cladiri
     Resursa Lemn("Lemn");
     Resursa Piatra("Piatra");
 
-    // 3. Creare Pozitii
     Pozitie p1(10, 5);
     Pozitie p2(20, 15);
 
-    // 4. Creare Cladiri
-    // Tip resursa: Lemn, productivitate: 10
     Cladire cl1("Wood camp", p1, Lemn, 10);
-    // Tip resursa: Piatra, productivitate: 5
     Cladire cl2("Rock camp", p2, Piatra, 5);
 
-    // 5. Adaugare Cladiri la Jucator
     j1.adaugaCladire(cl1);
     j1.adaugaCladire(cl2);
     j1.afiseazaCladiri();
 
-    // 6. Runda 1: Colectare
     j1.colecteazaProductia();
     j1.afiseazaInventar();
 
-    // 7. Runda 2: Colectare
     j1.colecteazaProductia();
     j1.afiseazaInventar(); // Lemnul ar trebui sa fie 20, Piatra 10
 
@@ -313,6 +470,45 @@ int main() {
     std::cout << "\nMutare cladire (Wood Camp) de la x: " << cl1.getPozX() << " y: " << cl1.getPozY()<< "\n";
     cl1.mutaCladirea(5, 5); // Pozitia devine 15, 10
     std::cout << "Noua pozitie: (" << cl1.getResursa().getNume() << ") x:" << cl1.getPozX() << " y: " << cl1.getPozY() << "\n";
+
+
+    std::cout << "\n\n--- Test Camp de Lupta si Calcul Cale ---\n";
+
+    CampDeLupta harta(1366, 768);
+    std::cout << harta << "\n";
+
+    Pozitie startPath(10, 50);
+    Pozitie endPath(1300, 700);
+    int nrPasi = 7; // Inclusiv start si end
+
+    std::cout << "\nCalcularea caii simple (in " << nrPasi << " pasi) de la "
+    << startPath << " la " << endPath;
+
+    std::vector<Pozitie> cale = harta.calculeazaCaleSimpla(startPath, endPath, nrPasi);
+
+    std::cout << "Calea calculata (vector de tupluri (x,y)):\n";
+    int i = 0;
+    for (const auto& p : cale) {
+        std::cout << "  Pas " << ++i << ": " << p;
+    }
+
+    // 12. Test Avansare Era
+    std::cout << "\n\n--- Test Avansare Era ---\n";
+    std::cout << "Jucatorul " << j1.getNume() << " este in: " << j1.getEraCurenta().getNumeAfisat() << "\n";
+
+    // 12.1. Adaugam prea resurse pentru test (simulam mai multe runde)
+    j1.adaugaResursa(Resursa("Lemn", 150));
+    j1.adaugaResursa(Resursa("Piatra", 100));
+    j1.afiseazaInventar();
+
+    // 12.2. Incercare de avansare
+    std::cout << "\nIncercare avansare la Era Feudala (Cost: Lemn 50, Piatra 25):\n";
+    j1.avansareEra();
+    j1.afiseazaInventar();
+
+    // 12.3. Starea curentă
+    std::cout << "\nStarea Jucatorului dupa avansare:\n";
+    std::cout << "Jucatorul " << j1.getNume() << " este acum in: " << j1.getEraCurenta().getNumeAfisat() << "\n";
 
     return 0;
 }
