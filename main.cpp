@@ -68,8 +68,8 @@ private:
 public:
     explicit Pozitie(int x = 0, int y = 0);
     void muta(int dx, int dy);
-    int getX() const;
-    int getY() const;
+    [[nodiscard]]int getX() const;
+    [[nodiscard]]int getY() const;
 
     friend std::ostream& operator<<(std::ostream& os, const Pozitie& p);
 };
@@ -107,14 +107,14 @@ public:
     Cladire(const Cladire& other);
     Cladire& operator=(const Cladire& other);
     ~Cladire();
-    int getPozX() const { return poz.getX(); }
-    int getPozY() const { return poz.getY(); }
+    [[nodiscard]] int getPozX() const { return poz.getX(); }
+    [[nodiscard]] int getPozY() const { return poz.getY(); }
 
-    const std::string& getNume() const;
+    [[nodiscard]] const std::string& getNume() const;
 
-    Resursa produce() const;
+    [[nodiscard]] Resursa produce() const;
     void mutaCladirea(int dx, int dy);
-    const Resursa& getResursa() const;
+    [[nodiscard]] const Resursa& getResursa() const;
 
     friend std::ostream& operator<<(std::ostream& os, const Cladire& c);
 };
@@ -164,23 +164,25 @@ std::ostream& operator<<(std::ostream& os, const Cladire& c) {
 
 // Definim Erele folosind o enumerare
 enum class NumeEra {
-    ERA_PIETREI,    // Dark Age
-    ERA_FEUDALA,    // Feudal Age
-    ERA_CAVALERILOR, // Castle Age
-    ERA_IMPERIALA  // Imperial Age
+    STONE_AGE,
+    FEUDAL_AGE,
+    CASTLE_AGE,
+    IMPERIAL_AGE
 };
 
 class Era {
 private:
     NumeEra nume;
+    int nivel;
     std::string numeAfisat;
 
 public:
-    explicit Era(NumeEra n = NumeEra::ERA_PIETREI, const std::string& afisat = "Era Pietrei")
-        : nume(n), numeAfisat(afisat) {}
+    explicit Era(NumeEra n = NumeEra::STONE_AGE, int niv = 1, const std::string& afisat = "Era Pietrei")
+        : nume(n), nivel(niv), numeAfisat(afisat) {}
 
     // Functii getter
     [[nodiscard]] NumeEra getNumeEra() const { return nume; }
+    [[nodiscard]] int getNivel() const { return nivel; }
     [[nodiscard]] const std::string& getNumeAfisat() const { return numeAfisat; }
 };
 
@@ -200,7 +202,7 @@ public:
     [[nodiscard]] const Era& getEraCurenta() const { return eraCurenta; }
 
     [[nodiscard]] std::vector<Resursa> getCostAvansare() const;
-    bool verificaConditiiAvansare() const;
+    [[nodiscard]] bool verificaConditiiAvansare() const;
     void avansareEra();
 
     void adaugaResursa(const Resursa& r);
@@ -291,19 +293,19 @@ std::ostream& operator<<(std::ostream& os, const Jucator& j) {
 std::vector<Resursa> Jucator::getCostAvansare() const {
     std::vector<Resursa> cost;
     switch (eraCurenta.getNumeEra()) {
-        case NumeEra::ERA_PIETREI:
+        case NumeEra::STONE_AGE:
             cost.emplace_back("Lemn", 50); // Cost pentru Era Feudala
             cost.emplace_back("Piatra", 25);
             break;
-        case NumeEra::ERA_FEUDALA:
+        case NumeEra::FEUDAL_AGE:
             cost.emplace_back("Lemn", 100); // Cost pentru Era Cavalerilor
             cost.emplace_back("Piatra", 75);
             break;
-        case NumeEra::ERA_CAVALERILOR:
+        case NumeEra::CASTLE_AGE:
             cost.emplace_back("Lemn", 200); // Cost pentru Era Imperiala
             cost.emplace_back("Piatra", 150);
             break;
-        case NumeEra::ERA_IMPERIALA:
+        case NumeEra::IMPERIAL_AGE:
         default:
             // Nu se poate avansa
             break;
@@ -355,28 +357,28 @@ void Jucator::avansareEra() {
     int nivelNou;
 
     switch (eraCurenta.getNumeEra()) {
-        case NumeEra::ERA_PIETREI:
-            eraNoua = NumeEra::ERA_FEUDALA;
-            numeNou = "Era Feudala";
+        case NumeEra::STONE_AGE:
+            eraNoua = NumeEra::FEUDAL_AGE;
+            numeNou = "FEUDAL AGE";
             nivelNou = 2;
             break;
-        case NumeEra::ERA_FEUDALA:
-            eraNoua = NumeEra::ERA_CAVALERILOR;
-            numeNou = "Era Cavalerilor";
+        case NumeEra::FEUDAL_AGE:
+            eraNoua = NumeEra::CASTLE_AGE;
+            numeNou = "CASTLE AGE";
             nivelNou = 3;
             break;
-        case NumeEra::ERA_CAVALERILOR:
-            eraNoua = NumeEra::ERA_IMPERIALA;
-            numeNou = "Era Imperiala";
+        case NumeEra::CASTLE_AGE:
+            eraNoua = NumeEra::IMPERIAL_AGE;
+            numeNou = "IMPERIAL AGE";
             nivelNou = 4;
             break;
-        case NumeEra::ERA_IMPERIALA:
+        case NumeEra::IMPERIAL_AGE:
         default:
             std::cout << "\n--- AVANSARE ESEC --- Esti deja in ultima era.\n";
             return;
     }
 
-    eraCurenta = Era(eraNoua, numeNou);
+    eraCurenta = Era(eraNoua, nivelNou, numeNou);
 
     std::cout << "\n**************************************************\n";
     std::cout << "*** AVANSARE REUSITA! Jucatorul a intrat in " << eraCurenta.getNumeAfisat() << " ***\n";
@@ -503,7 +505,7 @@ int main() {
 
     // 12.3. Starea curentă
     std::cout << "\nStarea Jucatorului dupa avansare:\n";
-    std::cout << "Jucatorul " << j1.getNume() << " este acum in: " << j1.getEraCurenta().getNumeAfisat() << "\n";
+    std::cout << "Jucatorul " << j1.getNume() << " este acum in: " << j1.getEraCurenta().getNumeAfisat() << " de nivel "<< j1.getEraCurenta().getNivel()<< "\n";
 
     return 0;
 }
