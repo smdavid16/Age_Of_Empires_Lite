@@ -177,7 +177,7 @@ private:
     std::string numeAfisat;
 
 public:
-    explicit Era(NumeEra n = NumeEra::STONE_AGE, int niv = 1, const std::string& afisat = "Era Pietrei")
+    explicit Era(NumeEra n = NumeEra::STONE_AGE, int niv = 1, const std::string& afisat = "Stone Age")
         : nume(n), nivel(niv), numeAfisat(afisat) {}
 
     // Functii getter
@@ -391,7 +391,7 @@ private:
     int inaltime;
 
 public:
-    explicit CampDeLupta(int l = 1366, int i = 768) : latime(l), inaltime(i) {}
+    explicit CampDeLupta(int l = 1920, int i = 1080) : latime(l), inaltime(i) {}
 
     [[nodiscard]] std::vector<Pozitie> calculeazaCaleSimpla(const Pozitie& start, const Pozitie& end, int pasi = 10) const;
 
@@ -471,12 +471,12 @@ int main() {
 
     std::cout << "\n\n--- Test Camp de Lupta si Calcul Cale ---\n";
 
-    CampDeLupta harta(1366, 768);
+    CampDeLupta harta(1920, 1080);
     std::cout << harta << "\n";
 
     Pozitie startPath(10, 50);
-    Pozitie endPath(1300, 700);
-    int nrPasi = 7; // Inclusiv start si end
+    Pozitie endPath(1900, 1200);
+    int nrPasi = 15; // Inclusiv start si end
 
     std::cout << "\nCalcularea caii simple (in " << nrPasi << " pasi) de la "
     << startPath << " la " << endPath;
@@ -499,7 +499,7 @@ int main() {
     j1.afiseazaInventar();
 
     // 12.2. Incercare de avansare
-    std::cout << "\nIncercare avansare la Era Feudala (Cost: Lemn 50, Piatra 25):\n";
+    std::cout << "\nIncercare avansare la Feudal Age (Cost: Lemn 50, Piatra 25):\n";
     j1.avansareEra();
     j1.afiseazaInventar();
 
