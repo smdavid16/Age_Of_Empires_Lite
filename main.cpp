@@ -1,170 +1,14 @@
 #include <iostream>
 #include <vector>
-
-class Resursa {
-private:
-    std::string nume;
-    int cantitate;
-
-public:
-    explicit Resursa(const std::string& n = "", int c = 0);
-    Resursa(const Resursa& other);                // constructor copiere
-    Resursa& operator=(const Resursa& other);     // operator=
-    ~Resursa();                                   // destructor
-
-    void adauga(int val);
-    void consuma(int val);
-    [[nodiscard]] int getCantitate() const;
-    [[nodiscard]]const std::string& getNume() const;
-
-    friend std::ostream& operator<<(std::ostream& os, const Resursa& r);
-};
-
-Resursa::Resursa(const std::string& n, int c) : nume(n), cantitate(c) {}
-
-Resursa::~Resursa() {}
-
-// Constructor de copiere
-Resursa::Resursa(const Resursa& other) : nume(other.nume), cantitate(other.cantitate) {}
-
-// Operator= de copiere
-Resursa& Resursa::operator=(const Resursa& other) {
-    if (this != &other) {
-        nume = other.nume;
-        cantitate = other.cantitate;
-    }
-    return *this;
-}
+#include <string>
+#include <cmath>
+#include <stdexcept>
+#include <algorithm>
+#include <map>
 
 
-void Resursa::adauga(int val) {
-    cantitate += val;
-}
-
-void Resursa::consuma(int val) {
-    if (val > cantitate)
-        std::cout << "Cantitate insuficienta de " <<  nume;
-    cantitate -= val;
-}
-
-int Resursa::getCantitate() const {
-    return cantitate;
-}
-
-const std::string& Resursa::getNume() const {
-    return nume;
-}
-
-std::ostream& operator<<(std::ostream& os, const Resursa& r) {
-    os << "Resursa: " << r.nume << " (" << r.cantitate << ")";
-    return os;
-}
-
-
-class Pozitie {
-private:
-    int x, y;
-
-public:
-    explicit Pozitie(int x = 0, int y = 0);
-    void muta(int dx, int dy);
-    [[nodiscard]]int getX() const;
-    [[nodiscard]]int getY() const;
-
-    friend std::ostream& operator<<(std::ostream& os, const Pozitie& p);
-};
-
-std::ostream& operator<<(std::ostream& os, const Pozitie& p) {
-    os << "Pozitie: " << p.x << " " << p.y << "\n";
-    return os;
-}
-
-Pozitie::Pozitie(int x, int y) : x(x), y(y) {}
-
-void Pozitie::muta(int dx, int dy) {
-    x += dx; y += dy;
-}
-
-int Pozitie::getX() const {
-    return x;
-}
-
-int Pozitie::getY() const {
-    return y;
-}
-
-
-
-class Cladire {
-private:
-    std::string nume;
-    Pozitie poz;
-    Resursa resursaProdusa;
-    int productie; // resursa per runda pe care le produce
-
-public:
-    Cladire(const std::string& n, const Pozitie& p, const Resursa& r, int prod);
-    Cladire(const Cladire& other);
-    Cladire& operator=(const Cladire& other);
-    ~Cladire();
-    [[nodiscard]] int getPozX() const { return poz.getX(); }
-    [[nodiscard]] int getPozY() const { return poz.getY(); }
-
-    [[nodiscard]] const std::string& getNume() const;
-
-    [[nodiscard]] Resursa produce() const;
-    void mutaCladirea(int dx, int dy);
-    [[nodiscard]] const Resursa& getResursa() const;
-
-    friend std::ostream& operator<<(std::ostream& os, const Cladire& c);
-};
-
-Cladire::Cladire(const std::string& n, const Pozitie& p, const Resursa& r, int prod)
-    : nume(n), poz(p), resursaProdusa(r), productie(prod) {}
-
-Cladire::Cladire(const Cladire& other)
-    : nume(other.nume), poz(other.poz), resursaProdusa(other.resursaProdusa), productie(other.productie) {}
-
-Cladire::~Cladire() {
-    // destructor
-}
-
-const std::string& Cladire::getNume() const{
-    return nume;
-}
-
-void Cladire::mutaCladirea(int dx, int dy) {
-    poz.muta(dx, dy);
-}
-const Resursa& Cladire::getResursa() const {
-    return resursaProdusa;
-}
-
-Cladire& Cladire::operator=(const Cladire& other) {
-    if (this != &other) {
-        nume = other.nume;
-        poz = other.poz; // Foloseste operator= din Pozitie
-        resursaProdusa = other.resursaProdusa; // Foloseste operator= din Resursa
-        productie = other.productie;
-    }
-    return *this;
-}
-
-
-Resursa Cladire::produce() const {
-    return Resursa(resursaProdusa.getNume(), productie);
-}
-
-std::ostream& operator<<(std::ostream& os, const Cladire& c) {
-    os << "Cladire: " << c.nume << "\n"
-       << "  " << c.poz // Foloseste operator << din Pozitie
-       << "  Produce: " << c.resursaProdusa.getNume() << " (+" << c.productie << " / runda)";
-    return os;
-}
-
-// Definim Erele folosind o enumerare
 enum class NumeEra {
-    STONE_AGE,
+    DARK_AGE,
     FEUDAL_AGE,
     CASTLE_AGE,
     IMPERIAL_AGE
@@ -177,49 +21,289 @@ private:
     std::string numeAfisat;
 
 public:
-    explicit Era(NumeEra n = NumeEra::STONE_AGE, int niv = 1, const std::string& afisat = "Stone Age")
+    explicit Era(NumeEra n = NumeEra::DARK_AGE, int niv = 1, const std::string& afisat = "Era Pietrei")
         : nume(n), nivel(niv), numeAfisat(afisat) {}
 
-    // Functii getter
     [[nodiscard]] NumeEra getNumeEra() const { return nume; }
     [[nodiscard]] int getNivel() const { return nivel; }
     [[nodiscard]] const std::string& getNumeAfisat() const { return numeAfisat; }
 };
+
+
+class Resursa {
+private:
+    std::string nume;
+    int cantitate;
+
+public:
+    explicit Resursa(const std::string& n = "", int c = 0) : nume(n), cantitate(c) {}
+    Resursa(const Resursa& other) = default;
+    Resursa& operator=(const Resursa& other) = default;
+    ~Resursa() = default;
+
+    void adauga(int val) { cantitate += val; }
+    void consuma(int val) {
+        if (val > cantitate) {
+            std::cout << "Cantitate insuficienta de " << nume << " (necesar: " << val << ", disponibil: " << cantitate << ")\n";
+        }
+        cantitate -= val;
+        if (cantitate < 0) cantitate = 0;
+    }
+    [[nodiscard]] int getCantitate() const { return cantitate; }
+    [[nodiscard]] const std::string& getNume() const { return nume; }
+
+    friend std::ostream& operator<<(std::ostream& os, const Resursa& r);
+};
+
+std::ostream& operator<<(std::ostream& os, const Resursa& r) {
+    os << "Resursa: " << r.nume << " (" << r.cantitate << ")";
+    return os;
+}
+
+
+
+class Pozitie {
+private:
+    int x, y;
+
+public:
+    explicit Pozitie(int x = 0, int y = 0) : x(x), y(y) {}
+    Pozitie(const Pozitie& other) = default;
+    Pozitie& operator=(const Pozitie& other) = default;
+
+    void muta(int dx, int dy) { x += dx; y += dy; }
+    int getX() const { return x; }
+    int getY() const { return y; }
+
+    friend std::ostream& operator<<(std::ostream& os, const Pozitie& p);
+};
+
+std::ostream& operator<<(std::ostream& os, const Pozitie& p) {
+    os << "Pozitie: (" << p.x << ", " << p.y << ")";
+    return os;
+}
+
+
+class CampDeLupta {
+private:
+    int latime;
+    int inaltime;
+
+public:
+    explicit CampDeLupta(int l = 1366, int i = 768) : latime(l), inaltime(i) {}
+
+    [[nodiscard]] int getLatime() const { return latime; }
+    [[nodiscard]] int getInaltime() const { return inaltime; }
+
+    [[nodiscard]] std::vector<Pozitie> calculeazaCaleSimpla(const Pozitie& start, const Pozitie& end, int pasi = 10) const;
+
+    friend std::ostream& operator<<(std::ostream& os, const CampDeLupta& c);
+};
+
+std::ostream& operator<<(std::ostream& os, const CampDeLupta& c) {
+    os << "Camp de Lupta: " << c.latime << "x" << c.inaltime;
+    return os;
+}
+
+std::vector<Pozitie> CampDeLupta::calculeazaCaleSimpla(const Pozitie& start, const Pozitie& end, int pasi) const {
+    std::vector<Pozitie> cale;
+    if (pasi < 2) pasi = 2;
+
+    int dx = end.getX() - start.getX();
+    int dy = end.getY() - start.getY();
+
+    double stepX = static_cast<double>(dx) / (pasi - 1);
+    double stepY = static_cast<double>(dy) / (pasi - 1);
+
+    for (int i = 0; i < pasi; ++i) {
+        int x = start.getX() + static_cast<int>(stepX * i);
+        int y = start.getY() + static_cast<int>(stepY * i);
+        cale.emplace_back(std::clamp(x, 0, latime), std::clamp(y, 0, inaltime));
+    }
+    return cale;
+}
+
+
+class Cladire {
+private:
+    std::string nume;
+    Pozitie poz;
+    Resursa resursaProdusa;
+    int productie;
+    int hpCurent;
+    int hpMaxim;
+
+public:
+    Cladire(const std::string& n, const Pozitie& p, const Resursa& r, int prod, int hp = 100);
+    Cladire(const Cladire& other) = default;
+    Cladire& operator=(const Cladire& other) = default;
+    ~Cladire() = default;
+
+    int getPozX() const { return poz.getX(); }
+    int getPozY() const { return poz.getY(); }
+    const std::string& getNume() const { return nume; }
+    const Resursa& getResursa() const { return resursaProdusa; }
+    int getHPCurent() const { return hpCurent; }
+
+    void primesteDaune(int daune);
+    bool esteDistrusa() const { return hpCurent <= 0; };
+
+    Resursa produce() const;
+    void mutaCladirea(int dx, int dy) { poz.muta(dx, dy); }
+
+    friend std::ostream& operator<<(std::ostream& os, const Cladire& c);
+};
+
+Cladire::Cladire(const std::string& n, const Pozitie& p, const Resursa& r, int prod, int hp)
+    : nume(n), poz(p), resursaProdusa(r), productie(prod), hpCurent(hp), hpMaxim(hp) {}
+
+void Cladire::primesteDaune(int daune) {
+    hpCurent -= daune;
+    if (hpCurent < 0) hpCurent = 0;
+    std::cout << "Cladirea " << nume << " a primit " << daune << " daune. HP ramas: " << hpCurent << "\n";
+}
+
+Resursa Cladire::produce() const {
+    return Resursa(resursaProdusa.getNume(), productie);
+}
+
+std::ostream& operator<<(std::ostream& os, const Cladire& c) {
+    os << "Cladire: " << c.nume << " (" << c.hpCurent << "/" << c.hpMaxim << " HP)\n"
+       << "  " << c.poz << "\n"
+       << "  Produce: " << c.resursaProdusa.getNume() << " (+" << c.productie << " / runda)";
+    return os;
+}
+
+
+
+class Unitate {
+private:
+    std::string nume;
+    Pozitie pozitieCurenta;
+    int puncteViata;
+    int puncteViataMax;
+    int putereAtac;
+    int armura;
+    int razaAtac;
+
+    std::string tipResursaColectata;
+    int rataColectareBaza;
+
+public:
+    Unitate(const std::string& n, const Pozitie& p, int hp, int atac, int arm, int raza, const std::string& resursa = "", int rata = 0);
+    Unitate(const Unitate& other) = default;
+    Unitate& operator=(const Unitate& other) = default;
+    ~Unitate() = default;
+
+    [[nodiscard]] const std::string& getNume() const { return nume; }
+    [[nodiscard]] int getPuncteViata() const { return puncteViata; }
+    [[nodiscard]] const Pozitie& getPozitie() const { return pozitieCurenta; }
+    [[nodiscard]] bool esteVie() const { return puncteViata > 0; }
+    [[nodiscard]] int getRataColectare() const { return rataColectareBaza; }
+    [[nodiscard]] const std::string& getTipResursaColectata() const { return tipResursaColectata; }
+
+
+    void mutaPePozitie(const Pozitie& nouaPoz) { pozitieCurenta = nouaPoz; }
+    void deplaseaza(int dx, int dy) { pozitieCurenta.muta(dx, dy); }
+
+    void primesteDaune(int daune);
+    int calculeazaDaune() const;
+    void ataca(Cladire& tinta);
+
+    Resursa colecteaza() const;
+    void seteazaObiectivColectare(const std::string& resursa, int rata) {
+        tipResursaColectata = resursa;
+        rataColectareBaza = rata;
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, const Unitate& u);
+};
+
+Unitate::Unitate(const std::string& n, const Pozitie& p, int hp, int atac, int arm, int raza, const std::string& resursa, int rata)
+    : nume(n), pozitieCurenta(p), puncteViata(hp), puncteViataMax(hp), putereAtac(atac), armura(arm), razaAtac(raza),
+      tipResursaColectata(resursa), rataColectareBaza(rata) {}
+
+void Unitate::primesteDaune(int daune) {
+    int daunePrimite = std::max(0, daune - armura);
+    puncteViata -= daunePrimite;
+    if (puncteViata < 0) puncteViata = 0;
+}
+
+int Unitate::calculeazaDaune() const {
+    return putereAtac;
+}
+
+void Unitate::ataca(Cladire& tinta) {
+    if (!this->esteVie()) {
+        std::cout << nume << " este distrusa si nu poate ataca.\n";
+        return;
+    }
+    if (tinta.esteDistrusa()) {
+        std::cout << "Tinta (" << tinta.getNume() << ") este deja distrusa.\n";
+        return;
+    }
+
+    int daune = this->calculeazaDaune();
+    std::cout << nume << " ataca " << tinta.getNume() << " provocand " << daune << " daune.\n";
+    tinta.primesteDaune(daune);
+}
+
+Resursa Unitate::colecteaza() const {
+    if (tipResursaColectata.empty() || rataColectareBaza == 0) {
+        return Resursa("", 0);
+    }
+    return Resursa(tipResursaColectata, rataColectareBaza);
+}
+
+std::ostream& operator<<(std::ostream& os, const Unitate& u) {
+    os << "Unitate: " << u.nume
+       << " (HP: " << u.puncteViata << "/" << u.puncteViataMax
+       << ", Atac: " << u.putereAtac << ", Armura: " << u.armura << ", Raza atac: " << u.razaAtac << ")\n"
+       << "  " << u.pozitieCurenta ;
+    if (!u.tipResursaColectata.empty()) {
+        os << " - Colecteaza: " << u.tipResursaColectata << " (+" << u.rataColectareBaza << "/runda)";
+    }
+    return os;
+}
+
 
 class Jucator {
 private:
     std::string nume;
     std::vector<Resursa> inventar;
     std::vector<Cladire> cladiri;
+    std::vector<Unitate> unitati;
     Era eraCurenta;
 
 public:
-    explicit Jucator(const std::string& n = "");
-    Resursa& getResursa(const std::string& numeResursa);
-    void consumaResursa(const std::string& numeResursa, int cantitate);
-    [[nodiscard]]const std::string& getNume() const;
+    explicit Jucator(const std::string& n = "") : nume(n), eraCurenta() {}
 
+    [[nodiscard]] const std::string& getNume() const { return nume; }
     [[nodiscard]] const Era& getEraCurenta() const { return eraCurenta; }
 
-    [[nodiscard]] std::vector<Resursa> getCostAvansare() const;
-    [[nodiscard]] bool verificaConditiiAvansare() const;
-    void avansareEra();
-
+    Resursa& getResursa(const std::string& numeResursa);
+    void consumaResursa(const std::string& numeResursa, int cantitate);
     void adaugaResursa(const Resursa& r);
+
     void adaugaCladire(const Cladire& c);
-    void colecteazaProductia();   // actualizeaza resursele
+
+    void adaugaUnitate(const Unitate& u);
+    void mutaUnitate(const std::string& numeUnitate, int index, int dx, int dy);
+    void unitateAtacaCladire(int unitateIndex, int cladireIndex);
+
+    void colecteazaProductia();
+
     void afiseazaInventar() const;
     void afiseazaCladiri() const;
+    void afiseazaUnitati() const;
+
+    [[nodiscard]] std::vector<Resursa> getCostAvansare() const;
+    bool verificaConditiiAvansare() const;
+    void avansareEra();
 
     friend std::ostream& operator<<(std::ostream& os, const Jucator& j);
 };
 
-Jucator::Jucator(const std::string& n) : nume(n) {
-}
-
-const std::string& Jucator::getNume() const {
-    return nume;
-}
 
 void Jucator::adaugaResursa(const Resursa& r) {
     for (Resursa& existing_r : inventar) {
@@ -231,45 +315,85 @@ void Jucator::adaugaResursa(const Resursa& r) {
     inventar.push_back(r);
 }
 
-void Jucator::adaugaCladire(const Cladire& c) {
-    cladiri.push_back(c);
-}
-
-void Jucator::colecteazaProductia() {
-    std::cout << "\n--- Colectare productie pentru " << nume << " ---\n";
-    for (const Cladire& c : cladiri) {
-        Resursa resursaProdusa = c.produce();
-        this->adaugaResursa(resursaProdusa);
-        std::cout << "  Produs: " << resursaProdusa.getNume() << " (+" << resursaProdusa.getCantitate() << ") de la " << c.getNume() << "\n";
-    }
-}
-
 Resursa& Jucator::getResursa(const std::string& numeResursa) {
     for (Resursa& r : inventar) {
         if (r.getNume() == numeResursa) {
             return r;
         }
     }
-    throw std::runtime_error("Resursa '" + numeResursa + "' nu exista in inventarul jucatorului.");
+    inventar.emplace_back(numeResursa, 0);
+    return inventar.back();
 }
 
 void Jucator::consumaResursa(const std::string& numeResursa, int cantitate) {
-    for (Resursa& r : inventar) {
-        if (r.getNume() == numeResursa) {
-            r.consuma(cantitate);
-        }else
-            std::cout << "Resursa " << numeResursa  <<  " nu exista in inventar.";
+    try {
+        getResursa(numeResursa).consuma(cantitate);
+    } catch (const std::runtime_error& e) {
     }
 }
 
+void Jucator::adaugaCladire(const Cladire& c) {
+    cladiri.push_back(c);
+}
+
+void Jucator::adaugaUnitate(const Unitate& u) {
+    unitati.push_back(u);
+}
+
+void Jucator::mutaUnitate(const std::string& numeUnitate, int index, int dx, int dy) {
+    if (index >= 0 && index < unitati.size() && unitati[index].getNume() == numeUnitate) {
+        unitati[index].deplaseaza(dx, dy);
+        std::cout << "Unitatea " << numeUnitate << " s-a deplasat la noua pozitie.\n";
+    } else {
+        std::cout << "Unitate invalida sau index gresit.\n";
+    }
+}
+
+void Jucator::unitateAtacaCladire(int unitateIndex, int cladireIndex) {
+    if (unitateIndex >= 0 && unitateIndex < unitati.size() &&
+        cladireIndex >= 0 && cladireIndex < cladiri.size()) {
+
+        unitati[unitateIndex].ataca(cladiri[cladireIndex]);
+
+        if (cladiri[cladireIndex].esteDistrusa()) {
+            std::cout << "Cladirea " << cladiri[cladireIndex].getNume() << " a fost distrusa!\n";
+            cladiri.erase(cladiri.begin() + cladireIndex);
+        }
+    } else {
+        std::cout << "Index de unitate sau cladire invalid.\n";
+    }
+}
+
+void Jucator::colecteazaProductia() {
+    std::cout << "\n--- Colectare productie pentru " << nume << " ---\n";
+
+    for (const Cladire& c : cladiri) {
+        if (!c.esteDistrusa()) {
+            Resursa resursaProdusa = c.produce();
+            this->adaugaResursa(resursaProdusa);
+            std::cout << "  Produs: " << resursaProdusa.getNume() << " (+" << resursaProdusa.getCantitate() << ") de la " << c.getNume() << "\n";
+        }
+    }
+
+    for (const Unitate& u : unitati) {
+        if (u.esteVie() && u.getRataColectare() > 0) {
+            Resursa resursaColectata = u.colecteaza();
+            this->adaugaResursa(resursaColectata);
+            std::cout << "  Colectat: " << resursaColectata.getNume() << " (+" << resursaColectata.getCantitate() << ") de la " << u.getNume() << "\n";
+        }
+    }
+}
+
+
 void Jucator::afiseazaInventar() const {
-    std::cout << "\nInventarul jucatorului " << nume << ":\n";
+    std::cout << "\nInventarul jucatorului " << nume << " (" << eraCurenta.getNumeAfisat() << "):\n";
     if (inventar.empty()) {
         std::cout << "  Inventar gol.\n";
         return;
     }
     for (const Resursa& r : inventar) {
-        std::cout << "  - " << r << "\n";
+        if (r.getCantitate() > 0)
+            std::cout << "  - " << r << "\n";
     }
 }
 
@@ -279,35 +403,42 @@ void Jucator::afiseazaCladiri() const {
         std::cout << "  Nicio cladire construita.\n";
         return;
     }
+    int i = 0;
     for (const Cladire& c : cladiri) {
-        std::cout << "  * " << c << "\n";
+        std::cout << "  [" << i++ << "] " << c << "\n";
     }
 }
 
-std::ostream& operator<<(std::ostream& os, const Jucator& j) {
-    os << "Jucator: " << j.nume
-       << " (Resurse: " << j.inventar.size() << ", Cladiri: " << j.cladiri.size() << ")";
-    return os;
+void Jucator::afiseazaUnitati() const {
+    std::cout << "\nUnitatile jucatorului " << nume << ":\n";
+    if (unitati.empty()) {
+        std::cout << "  Nicio unitate creata.\n";
+        return;
+    }
+    int i = 0;
+    for (const Unitate& u : unitati) {
+        if (u.esteVie())
+            std::cout << "  [" << i++ << "] " << u << "\n";
+    }
 }
 
 std::vector<Resursa> Jucator::getCostAvansare() const {
     std::vector<Resursa> cost;
     switch (eraCurenta.getNumeEra()) {
-        case NumeEra::STONE_AGE:
-            cost.emplace_back("Lemn", 50); // Cost pentru Era Feudala
+        case NumeEra::DARK_AGE:
+            cost.emplace_back("Lemn", 50);
             cost.emplace_back("Piatra", 25);
             break;
         case NumeEra::FEUDAL_AGE:
-            cost.emplace_back("Lemn", 100); // Cost pentru Era Cavalerilor
+            cost.emplace_back("Lemn", 100);
             cost.emplace_back("Piatra", 75);
             break;
         case NumeEra::CASTLE_AGE:
-            cost.emplace_back("Lemn", 200); // Cost pentru Era Imperiala
+            cost.emplace_back("Lemn", 200);
             cost.emplace_back("Piatra", 150);
             break;
         case NumeEra::IMPERIAL_AGE:
         default:
-            // Nu se poate avansa
             break;
     }
     return cost;
@@ -315,14 +446,10 @@ std::vector<Resursa> Jucator::getCostAvansare() const {
 
 bool Jucator::verificaConditiiAvansare() const {
     std::vector<Resursa> cost = getCostAvansare();
-    if (cost.empty()) {
-        std::cout << "Jucatorul este deja in ultima era!\n";
-        return false;
-    }
+    if (cost.empty()) return false;
 
     bool areSuficient = true;
     for (const auto& r_cost : cost) {
-        // Cautam resursa in inventar
         bool gasit = false;
         for (const auto& r_inv : inventar) {
             if (r_inv.getNume() == r_cost.getNume() && r_inv.getCantitate() >= r_cost.getCantitate()) {
@@ -335,7 +462,6 @@ bool Jucator::verificaConditiiAvansare() const {
             areSuficient = false;
         }
     }
-
     return areSuficient;
 }
 
@@ -347,29 +473,27 @@ void Jucator::avansareEra() {
 
     std::vector<Resursa> cost = getCostAvansare();
     for (const auto& r_cost : cost) {
-        // metoda Jucator::consumaResursa
         this->consumaResursa(r_cost.getNume(), r_cost.getCantitate());
     }
 
-    // 2. Treci la era urmatoare
     NumeEra eraNoua;
     std::string numeNou;
     int nivelNou;
 
     switch (eraCurenta.getNumeEra()) {
-        case NumeEra::STONE_AGE:
+        case NumeEra::DARK_AGE:
             eraNoua = NumeEra::FEUDAL_AGE;
-            numeNou = "FEUDAL AGE";
+            numeNou = "FEUDAL_AGE";
             nivelNou = 2;
             break;
         case NumeEra::FEUDAL_AGE:
             eraNoua = NumeEra::CASTLE_AGE;
-            numeNou = "CASTLE AGE";
+            numeNou = "CASTLE_AGE";
             nivelNou = 3;
             break;
         case NumeEra::CASTLE_AGE:
             eraNoua = NumeEra::IMPERIAL_AGE;
-            numeNou = "IMPERIAL AGE";
+            numeNou = "IMPERIAL_AGE";
             nivelNou = 4;
             break;
         case NumeEra::IMPERIAL_AGE:
@@ -385,127 +509,68 @@ void Jucator::avansareEra() {
     std::cout << "**************************************************\n";
 }
 
-class CampDeLupta {
-private:
-    int latime;
-    int inaltime;
-
-public:
-    explicit CampDeLupta(int l = 1920, int i = 1080) : latime(l), inaltime(i) {}
-
-    [[nodiscard]] std::vector<Pozitie> calculeazaCaleSimpla(const Pozitie& start, const Pozitie& end, int pasi = 10) const;
-
-    friend std::ostream& operator<<(std::ostream& os, const CampDeLupta& c);
-};
-
-std::ostream& operator<<(std::ostream& os, const CampDeLupta& c) {
-    os << "Camp de Lupta: " << c.latime << "x" << c.inaltime << " (Rezolutie)";
+std::ostream& operator<<(std::ostream& os, const Jucator& j) {
+    os << "Jucator: " << j.nume
+       << " (Era: " << j.eraCurenta.getNumeAfisat() << ", Cladiri: " << j.cladiri.size() << ", Unitati: " << j.unitati.size() << ")";
     return os;
 }
 
 
-std::vector<Pozitie> CampDeLupta::calculeazaCaleSimpla(const Pozitie& start, const Pozitie& end, int pasi) const {
-    std::vector<Pozitie> cale;
-    if (pasi < 2) pasi = 2;
-
-    int dx = end.getX() - start.getX();
-    int dy = end.getY() - start.getY();
-
-    // Calculul pasului unitar pentru x si y
-    double stepX = static_cast<double>(dx) / (pasi - 1);
-    double stepY = static_cast<double>(dy) / (pasi - 1);
-
-    for (int i = 0; i < pasi; ++i) {
-        int x = start.getX() + static_cast<int>(stepX * i);
-        int y = start.getY() + static_cast<int>(stepY * i);
-
-        cale.emplace_back(x, y);
-    }
-    return cale;
-}
-
 
 
 int main() {
+
+    CampDeLupta harta;
+    std::cout << harta << "\n";
+
     Jucator j1("David");
     std::cout << j1 << "\n";
 
-    Resursa Lemn("Lemn");
-    Resursa Piatra("Piatra");
+    Cladire cl1("Wood Camp", Pozitie(10, 5), Resursa("Lemn", 0), 10, 100);
+    Cladire cl2("Rock Camp", Pozitie(20, 15), Resursa("Piatra", 0), 5, 120);
 
-    Pozitie p1(10, 5);
-    Pozitie p2(20, 15);
-
-    Cladire cl1("Wood camp", p1, Lemn, 10);
-    Cladire cl2("Rock camp", p2, Piatra, 5);
+    Unitate u1("Taran", Pozitie(5, 5), 30, 1, 0, 1, "Lemn", 5);
+    Unitate u2("Spadasin", Pozitie(50, 50), 60, 10, 2, 1, "", 0);
 
     j1.adaugaCladire(cl1);
     j1.adaugaCladire(cl2);
+    j1.adaugaUnitate(u1);
+    j1.adaugaUnitate(u2);
+
+    j1.afiseazaCladiri();
+    j1.afiseazaUnitati();
+
+
+    j1.colecteazaProductia();
+    j1.afiseazaInventar();
+
+
+    std::cout << "\n--- Test Deplasare si Atac ---\n";
+    j1.mutaUnitate("Taran", 0, 10, 10);
+    j1.afiseazaUnitati();
+
+
+    std::cout << "\nSpadasin (Index 1) ataca Rock Camp (Index 1):\n";
+    j1.unitateAtacaCladire(1, 1);
     j1.afiseazaCladiri();
 
-    j1.colecteazaProductia();
+
+    std::cout << "\n--- Test Avansare Era ---\n";
     j1.afiseazaInventar();
 
-    j1.colecteazaProductia();
-    j1.afiseazaInventar(); // Lemnul ar trebui sa fie 20, Piatra 10
+    std::cout << "\nIncercare avansare la Era Feudala (ar trebui sa esueze, Lemn: 15):\n";
+    j1.avansareEra();
 
-    // 8. Adaugare Resursa existenta (pentru testul de adaugaResursa)
-    Resursa lemnBonus("Lemn", 5);
-    j1.adaugaResursa(lemnBonus);
-    std::cout << "\nAdaugare lemn bonus (5):\n";
-    j1.afiseazaInventar(); // Lemnul ar trebui sa fie 25
-
-    // 9. Consum Resursa (Test de exceptie)
-    std::cout << "\nIncercare de a consuma 10 unitati de Lemn.\n";
-    j1.consumaResursa("Lemn", 10); // Totul se face prin Jucator
+    std::cout << "\nAdaugam resurse suficiente:\n";
+    j1.adaugaResursa(Resursa("Lemn", 40));
+    j1.adaugaResursa(Resursa("Piatra", 20));
     j1.afiseazaInventar();
 
-    std::cout << "\nIncercare de a consuma 100 unitati de Lemn (va da eroare).\n";
-    j1.consumaResursa("Lemn", 100);
-
-    // 10. Mutare cladire
-    std::cout << "\nMutare cladire (Wood Camp) de la x: " << cl1.getPozX() << " y: " << cl1.getPozY()<< "\n";
-    cl1.mutaCladirea(5, 5); // Pozitia devine 15, 10
-    std::cout << "Noua pozitie: (" << cl1.getResursa().getNume() << ") x:" << cl1.getPozX() << " y: " << cl1.getPozY() << "\n";
-
-
-    std::cout << "\n\n--- Test Camp de Lupta si Calcul Cale ---\n";
-
-    CampDeLupta harta(1920, 1080);
-    std::cout << harta << "\n";
-
-    Pozitie startPath(10, 50);
-    Pozitie endPath(1900, 1200);
-    int nrPasi = 15; // Inclusiv start si end
-
-    std::cout << "\nCalcularea caii simple (in " << nrPasi << " pasi) de la "
-    << startPath << " la " << endPath;
-
-    std::vector<Pozitie> cale = harta.calculeazaCaleSimpla(startPath, endPath, nrPasi);
-
-    std::cout << "Calea calculata (vector de tupluri (x,y)):\n";
-    int i = 0;
-    for (const auto& p : cale) {
-        std::cout << "  Pas " << ++i << ": " << p;
-    }
-
-    // 12. Test Avansare Era
-    std::cout << "\n\n--- Test Avansare Era ---\n";
-    std::cout << "Jucatorul " << j1.getNume() << " este in: " << j1.getEraCurenta().getNumeAfisat() << "\n";
-
-    // 12.1. Adaugam prea resurse pentru test (simulam mai multe runde)
-    j1.adaugaResursa(Resursa("Lemn", 150));
-    j1.adaugaResursa(Resursa("Piatra", 100));
-    j1.afiseazaInventar();
-
-    // 12.2. Incercare de avansare
-    std::cout << "\nIncercare avansare la Feudal Age (Cost: Lemn 50, Piatra 25):\n";
+    std::cout << "\nIncercare avansare la Era Feudala (ar trebui sa reuseasca):\n";
     j1.avansareEra();
     j1.afiseazaInventar();
 
-    // 12.3. Starea curentă
-    std::cout << "\nStarea Jucatorului dupa avansare:\n";
-    std::cout << "Jucatorul " << j1.getNume() << " este acum in: " << j1.getEraCurenta().getNumeAfisat() << " de nivel "<< j1.getEraCurenta().getNivel()<< "\n";
+    std::cout << "\nStarea finala a jucatorului: " << j1 << "\n";
 
     return 0;
 }
