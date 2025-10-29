@@ -287,7 +287,6 @@ public:
     void adaugaCladire(const Cladire& c);
 
     void adaugaUnitate(const Unitate& u);
-    void mutaUnitate(const std::string& numeUnitate, int index, int dx, int dy);
     void unitateAtacaCladire(int unitateIndex, int cladireIndex);
 
     void colecteazaProductia();
@@ -325,10 +324,7 @@ Resursa& Jucator::getResursa(const std::string& numeResursa) {
 }
 
 void Jucator::consumaResursa(const std::string& numeResursa, int cantitate) {
-    try {
         getResursa(numeResursa).consuma(cantitate);
-    } catch (const std::runtime_error& e) {
-    }
 }
 
 void Jucator::adaugaCladire(const Cladire& c) {
@@ -337,15 +333,6 @@ void Jucator::adaugaCladire(const Cladire& c) {
 
 void Jucator::adaugaUnitate(const Unitate& u) {
     unitati.push_back(u);
-}
-
-void Jucator::mutaUnitate(const std::string& numeUnitate, int index, int dx, int dy) {
-    if (index >= 0 && index < (int)unitati.size() && unitati[index].getNume() == numeUnitate) {
-        unitati[index].deplaseaza(dx, dy);
-        std::cout << "Unitatea " << numeUnitate << " s-a deplasat la noua pozitie.\n";
-    } else {
-        std::cout << "Unitate invalida sau index gresit.\n";
-    }
 }
 
 void Jucator::unitateAtacaCladire(int unitateIndex, int cladireIndex) {
@@ -574,10 +561,16 @@ int main() {
     j1.unitateAtacaCladire(1, 1);
     j1.afiseazaCladiri();
 
+    std::cout << "\n--- Test Avansare Era (Nereusita) ---\n";
+
+    j1.avansareEra();
+
     std::cout << "\n--- Test Avansare Era (Reusita) ---\n";
     j1.adaugaResursa(Resursa("Lemn", 40));
     j1.adaugaResursa(Resursa("Piatra", 20));
     j1.avansareEra();
+
+    j1.afiseazaInventar();
 
     std::cout << "\nStarea finala a jucatorului: " << j1 << "\n";
 
