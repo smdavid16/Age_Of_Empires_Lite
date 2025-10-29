@@ -534,7 +534,6 @@ int main() {
     u1.seteazaObiectivColectare("Hrana", 8);
     std::cout << u1.getNume() << " si-a schimbat obiectivul la: " << u1.getTipResursaColectata() << "\n";
 
-    Pozitie nouaP(100, 100);
     u2.deplaseaza(50, 50);
     std::cout << u2.getNume() << " mutat la: " << u2.getPozitie() << "\n";
 
