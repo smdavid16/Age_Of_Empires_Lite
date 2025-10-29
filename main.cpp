@@ -203,7 +203,6 @@ public:
     [[nodiscard]] const std::string& getTipResursaColectata() const { return tipResursaColectata; }
 
 
-    void mutaPePozitie(const Pozitie& nouaPoz) { pozitieCurenta = nouaPoz; }
     void deplaseaza(int dx, int dy) { pozitieCurenta.muta(dx, dy); }
 
     void primesteDaune(int daune);
@@ -341,7 +340,7 @@ void Jucator::adaugaUnitate(const Unitate& u) {
 }
 
 void Jucator::mutaUnitate(const std::string& numeUnitate, int index, int dx, int dy) {
-    if (index >= 0 && index < unitati.size() && unitati[index].getNume() == numeUnitate) {
+    if (index >= 0 && index < (int)unitati.size() && unitati[index].getNume() == numeUnitate) {
         unitati[index].deplaseaza(dx, dy);
         std::cout << "Unitatea " << numeUnitate << " s-a deplasat la noua pozitie.\n";
     } else {
@@ -350,8 +349,8 @@ void Jucator::mutaUnitate(const std::string& numeUnitate, int index, int dx, int
 }
 
 void Jucator::unitateAtacaCladire(int unitateIndex, int cladireIndex) {
-    if (unitateIndex >= 0 && unitateIndex < unitati.size() &&
-        cladireIndex >= 0 && cladireIndex < cladiri.size()) {
+    if (unitateIndex >= 0 && unitateIndex < (int)unitati.size() &&
+        cladireIndex >= 0 && cladireIndex < (int)cladiri.size()) {
 
         unitati[unitateIndex].ataca(cladiri[cladireIndex]);
 
@@ -549,7 +548,7 @@ int main() {
     std::cout << u1.getNume() << " si-a schimbat obiectivul la: " << u1.getTipResursaColectata() << "\n";
 
     Pozitie nouaP(100, 100);
-    u2.mutaPePozitie(nouaP);
+    u2.deplaseaza(50, 50);
     std::cout << u2.getNume() << " mutat la: " << u2.getPozitie() << "\n";
 
 
