@@ -18,6 +18,20 @@ include(cmake/CopyHelper.cmake)
 
 add_executable(${MAIN_EXECUTABLE_NAME}
     main.cpp
+        Era.cpp
+        Era.h
+        Resursa.cpp
+        Resursa.h
+        Pozitie.cpp
+        Pozitie.h
+        CampDeLupta.cpp
+        CampDeLupta.h
+        Cladire.cpp
+        Cladire.h
+        Unitate.cpp
+        Unitate.h
+        Jucator.cpp
+        Jucator.h
 )
 
 
