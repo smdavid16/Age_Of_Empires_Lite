@@ -1,11 +1,9 @@
-#include <string>
-#include "Pozitie.h"
-#include "Cladire.h"
-#include <iostream>
-
 #ifndef OOP_UNITATE_H
 #define OOP_UNITATE_H
 
+#include <string>
+#include "Pozitie.h"
+#include "Cladire.h"
 
 class Unitate {
 private:

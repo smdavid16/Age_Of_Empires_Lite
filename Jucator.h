@@ -1,3 +1,5 @@
+#ifndef OOP_JUCATOR_H
+#define OOP_JUCATOR_H
 //
 // Created by David on 30/10/2025.
 //
@@ -6,11 +8,7 @@
 #include "Resursa.h"
 #include "Unitate.h"
 #include "Era.h"
-
-
-#ifndef OOP_JUCATOR_H
-#define OOP_JUCATOR_H
-
+#include "Cladire.h"
 
 class Jucator {
 private:
@@ -41,6 +39,11 @@ public:
     void afiseazaCladiri() const;
     void afiseazaUnitati() const;
 
+
+    [[nodiscard]] const std::vector<Cladire>& getCladiri() const { return cladiri;}
+    Cladire& getCladire(int index);
+    void mutaCladire(int index, int dx, int dy);
+    void mutaUnitate(int index, int dx, int dy);
     [[nodiscard]] std::vector<Resursa> getCostAvansare() const;
     bool verificaConditiiAvansare() const;
     void avansareEra();

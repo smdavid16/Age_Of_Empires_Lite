@@ -1,10 +1,12 @@
+#ifndef OOP_CLADIRE_H
+#define OOP_CLADIRE_H
+
 #include <string>
 #include <iostream>
 #include "Pozitie.h"
 #include "Resursa.h"
 
-#ifndef OOP_CLADIRE_H
-#define OOP_CLADIRE_H
+
 
 
 class Cladire {

@@ -152,6 +152,29 @@ bool Jucator::verificaConditiiAvansare() const {
     return areSuficient;
 }
 
+Cladire &Jucator::getCladire(int index) {
+    if (index < 0 || index >= (int)cladiri.size()) {
+        std::cout << "Iesit din vector";
+    }
+    return cladiri[index];
+}
+
+void Jucator::mutaCladire(int index, int dx, int dy) {
+    if (index >= 0 && index < (int)cladiri.size()) {
+        cladiri[index].mutaCladirea(dx, dy);
+    } else {
+        std::cout << "Index de cladire invalid pentru mutare.\n";
+    }
+}
+
+void Jucator::mutaUnitate(int index, int dx, int dy) {
+    if (index >= 0 && index < (int)cladiri.size()) {
+        unitati[index].deplaseaza(dx, dy);
+    } else {
+        std::cout << "Index de cladire invalid pentru mutare.\n";
+    }
+}
+
 void Jucator::avansareEra() {
     if (!verificaConditiiAvansare()) {
         std::cout << "\n--- AVANSARE ESEC --- Conditii de avansare in era nu sunt indeplinite!\n";
