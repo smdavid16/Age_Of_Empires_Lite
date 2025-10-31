@@ -9,6 +9,7 @@
 class GameSimulator {
 private:
     std::vector<Unitate> unitati;
+    std::vector<Cladire> cladiri;
     Jucator j1;
     CampDeLupta harta;
     Unitate uTaran;
@@ -25,7 +26,6 @@ public:
     {
         std::cout << "--- Initializare Game Simulator ---\n";
 
-        // 1. Cladiri si Unitati initiale
         j1.adaugaCladire(cWoodCamp);
         j1.adaugaCladire(Cladire("Rock Camp", Pozitie(20, 15), Resursa("Piatra", 0), 5, 120));
         j1.adaugaUnitate(uTaran);
@@ -34,7 +34,6 @@ public:
         std::cout << harta << "\n";
         std::cout << j1 << "\n";
 
-        // Asigurăm resurse pentru testul de avansare
         j1.adaugaResursa(Resursa("Lemn", 50));
         j1.adaugaResursa(Resursa("Piatra", 25));
     }
@@ -46,28 +45,23 @@ public:
         switch (pasCurent) {
             case 1:
                 std::cout << "ACTIUNE: Test Functii de Inspectie si Setare Initiale\n";
-
+                j1.mutaUnitate(0, 10, 10);
                 uTaran = j1.getUnitate(0);
                 unitati = j1.getUnitati();
+                cladiri = j1.getCladiri();
+
                 std::cout << "ACTIUNE: ENUMERARE UNITATI IN INVENTAR\n";
-                for (Unitate u:unitati) {
-                    std::cout << u << "\n";
-                }
-                // FOLOSIRE getLatime(), getInaltime()
+                j1.afiseazaUnitati();
+
                 std::cout << "  Dimensiuni Harta: " << harta.getLatime() << "x" << harta.getInaltime() << "\n";
-
-                // FOLOSIRE getCladire().getPozX(), getCladire().getPozY()
-                std::cout << "  " << j1.getCladire(0).getNume() << " la Pozitia: X=" << j1.getCladire(0).getPozX() << ", Y=" << j1.getCladire(0).getPozY() << "\n";
-
-                // FOLOSIRE getEraCurenta().getNivel()
+                std::cout << "  " << j1.getCladire(0).getNume() << " la Pozitia: X=" << j1.getCladire(0).getPozX() << ", Y=" << j1.getCladire(0).getPozY() << "\n" << " HP: "<< j1.getCladire(0).getHPCurent() << "\n";
                 std::cout << "  Nivel Era Curenta: " << j1.getEraCurenta().getNivel() << "\n";
-
-                // FOLOSIRE getUnitate().getPuncteViata(), getUnitate().getPozitie(), getUnitate().getTipResursaColectata()
                 std::cout << "  " << unitati[0].getNume() << " HP: " << unitati[0].getPuncteViata()
                           << ", Pozitie: " << unitati[0].getPozitie()
                           << ", Colecteaza: " << unitati[0].getTipResursaColectata() << "\n";
 
-                // FOLOSIRE seteazaObiectivColectare()
+
+
                 unitati[0].seteazaObiectivColectare("Hrana", 8);
                 std::cout << "  Unitatea a schimbat obiectivul la: " <<unitati[0].getTipResursaColectata() << "\n";
 
@@ -86,7 +80,6 @@ public:
                 break;
             case 4:
                 std::cout << "ACTIUNE: Atac si Verificare Stare Cladire\n";
-                // Atacăm Rock Camp (index 1) cu Spadasin (index 1)
                 j1.unitateAtacaCladire(1, 1);
                 j1.afiseazaCladiri();
                 break;
@@ -100,7 +93,6 @@ public:
         Pozitie end(1366, 768);
         std::vector<Pozitie> cale = harta.calculeazaCaleSimpla(start, end, 10);
         std::cout << "\nTeste Utilitare rulate: Cale calculata cu succes (" << cale.size() << " pasi).\n";
-        // Funcțiile care erau nefolosite în main sunt rulate aici pentru curățenie.
     }
 };
 
