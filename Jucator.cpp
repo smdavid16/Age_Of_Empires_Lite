@@ -4,6 +4,13 @@
 
 #include "Jucator.h"
 
+Unitate& Jucator::getUnitate(int index) {
+    if (index < 0 || index >= (int)unitati.size()) {
+        throw std::out_of_range("Index de unitate invalid: " + std::to_string(index));
+    }
+    return unitati[index];
+}
+
 void Jucator::adaugaResursa(const Resursa& r) {
     for (Resursa& existing_r : inventar) {
         if (existing_r.getNume() == r.getNume()) {

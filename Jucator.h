@@ -25,6 +25,8 @@ public:
     [[nodiscard]] const Era& getEraCurenta() const { return eraCurenta; }
 
     Resursa& getResursa(const std::string& numeResursa);
+    [[nodiscard]] const std::vector<Unitate>& getUnitati() const { return unitati; }
+    Unitate& getUnitate(int index);
     void consumaResursa(const std::string& numeResursa, int cantitate);
     void adaugaResursa(const Resursa& r);
 
