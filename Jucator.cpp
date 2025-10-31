@@ -5,10 +5,11 @@
 #include "Jucator.h"
 
 Unitate& Jucator::getUnitate(int index) {
-    if (index < 0 || index >= (int)unitati.size()) {
-        throw std::out_of_range("Index de unitate invalid: " + std::to_string(index));
+    try {
+        return unitati.at(index);
+    } catch (const std::out_of_range&) {
+        throw std::out_of_range("Eroare la accesarea unitatii: Index " + std::to_string(index) + " este in afara limitelor.");
     }
-    return unitati[index];
 }
 
 void Jucator::adaugaResursa(const Resursa& r) {
@@ -160,10 +161,13 @@ bool Jucator::verificaConditiiAvansare() const {
 }
 
 Cladire &Jucator::getCladire(int index) {
-    if (index < 0 || index >= (int)cladiri.size()) {
-        std::cout << "Iesit din vector";
+    try {
+        return cladiri.at(index);
+    } catch (const std::out_of_range&) {
+        // Interceptăm excepția generată de .at() și o putem re-arunca
+        // sau afișa un mesaj de eroare mai specific, dacă este necesar.
+        throw std::out_of_range("Eroare la accesarea cladirii: Index " + std::to_string(index) + " este in afara limitelor.");
     }
-    return cladiri[index];
 }
 
 void Jucator::mutaCladire(int index, int dx, int dy) {
