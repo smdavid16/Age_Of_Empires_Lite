@@ -1,4 +1,4 @@
-## Age OF Empires Lite
+## Age Of Empires Lite
 
 ### Scurtă descriere
 Acest proiect are ca scop implementarea unui joc in stilul Age Of Empires folosind concepte de Programare Orientata pe Obiecte. Age Of Empires este un Real Time Strategy (RTS) bazat pe avansarea unei societăți pe parcursul a mai multor epoci (age): Dark Age, Feudal Age, Castle Age și Imperial Age. Avansarea între epoci se face prin acumularea de materiale și clădiri care se pot folosi pentru instruirea unei armate și a "industriei" necesare menținerii armatei. Jocul are ca scop ultim cucerirea tuturor celorlalte societăți vecine pentru a deveni cea mai puternică dintre ele.
