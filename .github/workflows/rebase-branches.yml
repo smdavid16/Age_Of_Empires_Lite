@@ -32,7 +32,7 @@ jobs:
         run: |
           git config user.email "${{ github.actor }}@users.noreply.github.com"
           git config user.name "${{ github.actor }}"
-      
+
       - name: Fetch branches
         run: |
           git fetch origin
@@ -66,15 +66,15 @@ jobs:
 
             # Daca BRANCH e in rebase-branches.json, folosesc base-ul de acolo. Daca nu, folosesc default_base = 'main'
             BASE=$(echo "$BASE_BRANCHES" | jq -r --arg BRANCH "$BRANCH" '.[$BRANCH] // "main"')
-            
+          
             # Daca a fost scris un base in input, suprascriu BASE cu ce a fost in input
             if [[ -n "${{ env.INPUT_BASE }}" ]]; then
               BASE="${{ env.INPUT_BASE }}"
             fi
-            
+          
             echo "Using base: $BASE"
             git checkout -B "$BRANCH" "origin/$BRANCH"
-            
+          
             if git rebase "origin/$BASE"; then
               echo "Rebase succeeded"
               # FIXME

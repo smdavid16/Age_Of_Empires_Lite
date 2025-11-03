@@ -6,4 +6,3 @@ EXECUTABLE_NAME=${EXECUTABLE_NAME:-oop}
 
 tr -d '\r' < "${INPUT_FILENAME}" | ./"${ZIP_NAME}"/"${EXECUTABLE_NAME}" &
 bash ./scripts/run_test.sh 3 1 2
-
