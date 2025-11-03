@@ -1,36 +1,30 @@
 #include <iostream>
 #include <string>
-
+#include <algorithm>
+#include <limits>
 #include "GameSimulator.h"
-#include <fstream>
 
-std::ifstream fin("tastatura.txt");
 
 int main() {
     GameSimulator simulator;
     simulator.testUtilityFunctions();
 
-    if (!fin.is_open()) {
-        std::cerr << "Eroare la deschiderea fisierului 'tastatura.txt'!\n";
-        return 1;
-    }
-
     std::cout << "\n------------------------------------------------\n";
-    std::cout << "SIMULARE INCEPUTA PRIN INTRARE DIN FISIER ('tastatura.txt').\n";
+    std::cout << "APASA [ENTER] PENTRU A RULA PASUL URMATOR AL SIMULARII.\n";
+    std::cout << "APASA CTRL+C PENTRU A IESI.\n";
     std::cout << "------------------------------------------------\n";
 
+    while (true) {
+        std::cout << "\nAsteapta tasta Enter... ";
 
-    std::string line;
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-    while (std::getline(fin, line)) {
-        std::cout << "Rulare pasul simularii (citit linia: '" << line << "')...\n";
+        if (std::cin.eof()) {
+            break;
+        }
+
         simulator.runNextStep();
-
     }
-
-    std::cout << "\n------------------------------------------------\n";
-    std::cout << "SFARSITUL FISIERULUI ATINS. SIMULARE TERMINATA.\n";
-    std::cout << "------------------------------------------------\n";
 
     return 0;
 }
