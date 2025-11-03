@@ -10,6 +10,10 @@ runs:
         echo "CC=clang-${CLANG_VER}" >> $GITHUB_ENV
         echo "CXX=clang++-${CLANG_VER}" >> $GITHUB_ENV
 
+    - name: Install Linux Dependencies
+      if: runner.os == 'Linux'
+      uses: ./.github/actions/install-linux-deps
+
     # Also see https://github.com/actions/runner-images/discussions/9446#discussioncomment-8668538
     - name: Install Clang ${{ env.CLANG_VER }}
       # renovate: datasource=github-tags depName=nick-fields/retry versioning=loose
