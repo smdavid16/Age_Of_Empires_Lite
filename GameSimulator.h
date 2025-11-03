@@ -68,12 +68,13 @@ public:
                 break;
             case 2:
                 std::cout << "ACTIUNE: Deplasare si Colectare\n";
-                j1.mutaCladire(0, 5, 5); // Mută Wood Camp
+                j1.mutaCladire(0, 5, 5);
                 j1.colecteazaProductia();
                 j1.afiseazaInventar();
                 break;
             case 3:
                 std::cout << "ACTIUNE: Avansare Era\n";
+
                 // FOLOSIRE avansareEra()
                 j1.avansareEra();
                 j1.afiseazaInventar();

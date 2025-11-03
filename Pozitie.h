@@ -1,8 +1,7 @@
-#include <iostream>
-#include <string>
-
 #ifndef OOP_POZITIE_H
 #define OOP_POZITIE_H
+#include <iostream>
+
 
 
 class Pozitie {
@@ -11,14 +10,27 @@ private:
 
 public:
     explicit Pozitie(int x = 0, int y = 0) : x(x), y(y) {}
-    Pozitie(const Pozitie& other) = default;
-    Pozitie& operator=(const Pozitie& other) = default;
-
+    Pozitie(const Pozitie& other) {
+        x = other.x;
+        y = other.y;
+        std::cout << "Apel constructor copiere Pozitie: " << std::endl;
+    };
+    ~Pozitie() {
+        std::cout << "Destructor Pozitie: " << std::endl;
+    }
     void muta(int dx, int dy) { x += dx; y += dy; }
     [[nodiscard]]int getX() const { return x; }
     [[nodiscard]]int getY() const { return y; }
 
     friend std::ostream& operator<<(std::ostream& os, const Pozitie& p);
+    Pozitie& operator=(const Pozitie& other){
+        if (this == &other) {
+            return *this;
+        }
+        x = other.x;
+        y = other.y;
+        return *this;
+    }
 };
 
 
