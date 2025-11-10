@@ -1,30 +1,21 @@
-#include <iostream>
-#include <string>
-#include <algorithm>
-#include <limits>
-#include "GameSimulator.h"
+#include <SFML/Graphics.hpp>
 
+int main()
+{
+    sf::RenderWindow window(sf::VideoMode({200, 200}), "SFML works!");
+    sf::CircleShape shape(100.f);
+    shape.setFillColor(sf::Color::Green);
 
-int main() {
-    GameSimulator simulator;
-    simulator.testUtilityFunctions();
-
-    std::cout << "\n------------------------------------------------\n";
-    std::cout << "APASA [ENTER] PENTRU A RULA PASUL URMATOR AL SIMULARII.\n";
-    std::cout << "APASA CTRL+C PENTRU A IESI.\n";
-    std::cout << "------------------------------------------------\n";
-
-    while (true) {
-        std::cout << "\nAsteapta tasta Enter... ";
-
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-        if (std::cin.eof()) {
-            break;
+    while (window.isOpen())
+    {
+        while (const std::optional event = window.pollEvent())
+        {
+            if (event->is<sf::Event::Closed>())
+                window.close();
         }
 
-        simulator.runNextStep();
+        window.clear();
+        window.draw(shape);
+        window.display();
     }
-
-    return 0;
 }
