@@ -2,8 +2,6 @@
 #define OOP_POZITIE_H
 #include <iostream>
 
-
-
 class Pozitie {
 private:
     int x, y;
@@ -13,14 +11,13 @@ public:
     Pozitie(const Pozitie& other) {
         x = other.x;
         y = other.y;
-        std::cout << "Apel constructor copiere Pozitie: " << std::endl;
     };
-    ~Pozitie() {
-        std::cout << "Destructor Pozitie: " << std::endl;
-    }
+
     void muta(int dx, int dy) { x += dx; y += dy; }
     [[nodiscard]]int getX() const { return x; }
     [[nodiscard]]int getY() const { return y; }
+    void setX(int xnou) {x = xnou;}
+    void setY(int ynou) {y = ynou;}
 
     friend std::ostream& operator<<(std::ostream& os, const Pozitie& p);
     Pozitie& operator=(const Pozitie& other){

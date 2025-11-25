@@ -6,11 +6,8 @@
 #include "Pozitie.h"
 #include "Resursa.h"
 
-
-
-
 class Cladire {
-private:
+protected:
     std::string nume;
     Pozitie poz;
     Resursa resursaProdusa;
