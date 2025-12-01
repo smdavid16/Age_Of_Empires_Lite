@@ -76,6 +76,13 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         GameSimulator.h
         Tile.cpp
         Tile.h
+        MapRenderer.cpp
+        MapRenderer.h
+        Ferma.cpp
+        Ferma.h
+        turn.cpp
+        turn.h
+        Unitaticoncrete.h
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )

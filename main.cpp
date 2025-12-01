@@ -1,59 +1,67 @@
-// main.cpp (Fixed for SFML 3)
 #include <SFML/Graphics.hpp>
-#include "CampDeLupta.h" // Assuming TILE_SIZE is defined here
+#include <iostream>
 
-const int MAP_WIDTH = 160;
-const int MAP_HEIGHT = 90;
-const int WINDOW_WIDTH = 1920;
-const int WINDOW_HEIGHT = 1080;
+#include "CampDeLupta.h"
+#include "MapRenderer.h"
+
+// Dimensiunea hartii in tile-uri
+const int MAP_WIDTH = 500;
+const int MAP_HEIGHT = 300;
 
 int main() {
-    sf::VideoMode mode({WINDOW_WIDTH, WINDOW_HEIGHT}); // Modern init
-    sf::RenderWindow window(mode, "Age of Empires Lite");
+    // Fereastra jocului
+    sf::RenderWindow window(sf::VideoMode({1920, 1080}), "Age of OOP");
     window.setFramerateLimit(60);
 
-    CampDeLupta map(MAP_WIDTH, MAP_HEIGHT);
 
-    map.loadTextures("tileset.png");
+    sf::View camera = window.getDefaultView();
+    float cameraSpeed = 1000.0f;
+    sf::Clock dtClock;
 
-    sf::Vector2f position(0.f, 0.f);
-    sf::Vector2f size((float)WINDOW_WIDTH, (float)WINDOW_HEIGHT);
-    sf::FloatRect viewRect(position, size);
-    sf::View view(viewRect);
+    std::cout << "Generez harta..." << '\n';
+    CampDeLupta logicMap(MAP_WIDTH, MAP_HEIGHT);
 
-    view.setCenter(map.gridToPixel(Pozitie(MAP_WIDTH / 2, MAP_HEIGHT / 2)));
+    std::cout << "Initializez randarea..." << '\n';
+    MapRenderer renderer;
 
+    renderer.loadTextures("tileset.png");
+
+    renderer.buildVertexArray(logicMap);
+
+    // Game loop
     while (window.isOpen()) {
-        while (auto event = window.pollEvent()) {
+        float dt = dtClock.restart().asSeconds();
 
-            // Window closed
-            if (event->is<sf::Event::Closed>()) {
-                window.close();
-            }
+        // Inputuri de la tastatura
+        while (const std::optional event = window.pollEvent()) {
+             if (event->is<sf::Event::Closed>()) {
+                 window.close();
+             }
 
-            // Key pressed
-            if (auto* key = event->getIf<sf::Event::KeyPressed>()) {
-                if (key->code == sf::Keyboard::Key::Escape)
-                    window.close();
-            }
+             // Test: Apasa R si poti regenera harta on the fly
+             if (event->is<sf::Event::KeyPressed>()) {
+                 if (event->getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::R) {
+                     std::cout << "Regenerez harta..." << std::endl;
+                     logicMap.generateRandomMap();
+                     renderer.buildVertexArray(logicMap);
+                 }
+             }
         }
 
-        const float CAMERA_SPEED = 10.0f;
+        // Miscarea camerei: WASD, SFML suporta si apasarea a mai multor taste in acelasi timp
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) camera.move({0, -cameraSpeed * dt});
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) camera.move({0,  cameraSpeed * dt});
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) camera.move({-cameraSpeed * dt, 0});
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) camera.move({ cameraSpeed * dt, 0});
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W))
-            view.move(sf::Vector2f(0.f, -CAMERA_SPEED));
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S))
-            view.move(sf::Vector2f(0.f,  CAMERA_SPEED));
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
-            view.move(sf::Vector2f(-CAMERA_SPEED, 0.f));
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
-            view.move(sf::Vector2f(CAMERA_SPEED, 0.f));
+        window.clear();
 
+        window.setView(camera);
 
-        window.clear(sf::Color(100, 100, 200));
-        window.setView(view);
-        map.draw(window);
+        renderer.draw(window);
+
         window.display();
     }
+
     return 0;
 }

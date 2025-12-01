@@ -2,50 +2,45 @@
 #define OOP_UNITATE_H
 
 #include <string>
+#include <iostream>
+#include <memory>
 #include "Pozitie.h"
-#include "Cladire.h"
+
+class CampDeLupta;
+class Cladire;
 
 class Unitate {
-private:
+protected:
     std::string nume;
-    Pozitie pozitieCurenta;
-    int puncteViata;
-    int puncteViataMax;
-    int putereAtac;
+    Pozitie poz;
+    int hp;
+    int hpMax;
+    int damage;
     int armura;
-    int razaAtac;
+    int ownerID;
 
-    std::string tipResursaColectata;
-    int rataColectareBaza;
+    virtual void doAfisare(std::ostream& os) const;
 
 public:
-    Unitate(const std::string& n, const Pozitie& p, int hp, int atac, int arm, int raza, const std::string& resursa = "", int rata = 0);
-    Unitate(const Unitate& other) = default;
-    Unitate& operator=(const Unitate& other) = default;
-    ~Unitate() = default;
+    Unitate(std::string n, const Pozitie& p, int hp, int dmg, int arm, int id);
 
-    [[nodiscard]] const std::string& getNume() const { return nume; }
-    [[nodiscard]] int getPuncteViata() const { return puncteViata; }
-    [[nodiscard]] const Pozitie& getPozitie() const { return pozitieCurenta; }
-    [[nodiscard]] bool esteVie() const { return puncteViata > 0; }
-    [[nodiscard]] int getRataColectare() const { return rataColectareBaza; }
-    [[nodiscard]] const std::string& getTipResursaColectata() const { return tipResursaColectata; }
+    virtual ~Unitate() = default;
 
+    [[nodiscard]] virtual Unitate* clone() const = 0;
 
-    void deplaseaza(int dx, int dy) { pozitieCurenta.muta(dx, dy); }
+    virtual void actioneaza(CampDeLupta& harta) = 0;
 
+    void deplaseaza(int dx, int dy);
     void primesteDaune(int daune);
-    int calculeazaDaune() const;
-    void ataca(Cladire& tinta);
 
-    Resursa colecteaza() const;
-    void seteazaObiectivColectare(const std::string& resursa, int rata) {
-        tipResursaColectata = resursa;
-        rataColectareBaza = rata;
-    }
+    [[nodiscard]] bool esteVie() const { return hp > 0; }
+    [[nodiscard]] int getOwnerID() const { return ownerID; }
+    [[nodiscard]] int getPozX() const { return poz.getX(); }
+    [[nodiscard]] int getPozY() const { return poz.getY(); }
+    [[nodiscard]] const std::string& getNume() const { return nume; }
 
+    void afiseazaInfo(std::ostream& os) const;
     friend std::ostream& operator<<(std::ostream& os, const Unitate& u);
 };
-
 
 #endif //OOP_UNITATE_H

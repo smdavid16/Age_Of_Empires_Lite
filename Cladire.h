@@ -3,39 +3,50 @@
 
 #include <string>
 #include <iostream>
+#include <memory> // For smart pointers
 #include "Pozitie.h"
-#include "Resursa.h"
+
+class CampDeLupta;
 
 class Cladire {
 protected:
     std::string nume;
     Pozitie poz;
-    Resursa resursaProdusa;
-    int productie;
     int hpCurent;
     int hpMaxim;
+    int ownerID;
+
+    void swap(Cladire& other) noexcept;
+
+
+    virtual void doAfisare(std::ostream& os) const;
 
 public:
-    Cladire(const std::string& n, const Pozitie& p, const Resursa& r, int prod, int hp = 100);
-    Cladire(const Cladire& other) = default;
-    Cladire& operator=(const Cladire& other) = default;
-    ~Cladire() = default;
+    Cladire(std::string n, const Pozitie& p, int hp, int id);
 
-    [[nodiscard]]int getPozX() const { return poz.getX(); }
-    [[nodiscard]]int getPozY() const { return poz.getY(); }
-    [[nodiscard]]const std::string& getNume() const { return nume; }
-    [[nodiscard]]const Resursa& getResursa() const { return resursaProdusa; }
-    [[nodiscard]]int getHPCurent() const { return hpCurent; }
+    virtual ~Cladire() = default;
+
+
+    [[nodiscard]] virtual Cladire* clone() const = 0;
+
+
+    virtual void actioneaza(CampDeLupta& harta) = 0;
+
+
+    void afiseazaInfo(std::ostream& os) const;
+
+    // Getters
+    [[nodiscard]] int getPozX() const { return poz.getX(); }
+    [[nodiscard]] int getPozY() const { return poz.getY(); }
+    [[nodiscard]] const std::string& getNume() const { return nume; }
+    [[nodiscard]] int getHPCurent() const { return hpCurent; }
+    [[nodiscard]] int getOwnerID() const { return ownerID; }
 
     void primesteDaune(int daune);
-    [[nodiscard]]bool esteDistrusa() const { return hpCurent <= 0; };
-
-    Resursa produce() const;
-    void mutaCladirea(int dx, int dy) { poz.muta(dx, dy); }
+    [[nodiscard]] bool esteDistrusa() const;
+    void mutaCladirea(int dx, int dy);
 
     friend std::ostream& operator<<(std::ostream& os, const Cladire& c);
 };
-
-
 
 #endif //OOP_CLADIRE_H
