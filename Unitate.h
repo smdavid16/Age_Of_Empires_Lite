@@ -29,9 +29,11 @@ public:
     [[nodiscard]] virtual Unitate* clone() const = 0;
 
     virtual void actioneaza(CampDeLupta& harta) = 0;
+    bool incearcaDeplasare(int dx, int dy, const CampDeLupta& harta);
 
     void deplaseaza(int dx, int dy);
     void primesteDaune(int daune);
+    void buffStats(int plus);
 
     [[nodiscard]] bool esteVie() const { return hp > 0; }
     [[nodiscard]] int getOwnerID() const { return ownerID; }

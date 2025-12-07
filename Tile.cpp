@@ -3,9 +3,6 @@
 //
 
 #include "Tile.h"
-
-
-
 Tile::Tile(TileType t) :
     type(t),
     resourceAmount(0)

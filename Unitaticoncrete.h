@@ -10,8 +10,10 @@ class Muncitor : public Unitate {
     std::string resursaCurenta;
 
 public:
+    //--- 1. MUNCITOR ---
+    // specializat in a colecta resurse, munceste pe camp practic, daca e nevoie sa atace, da cu o bata de polistiren in inamic
     Muncitor(const Pozitie& p, int id)
-        : Unitate("Muncitor", p, 50, 3, 0, id), capacitateColectare(10), resursaCurenta("Nimic") {}
+        : Unitate("Muncitor", p, 50, 1, 0, id), capacitateColectare(10), resursaCurenta("Nimic") {}
 
     Unitate* clone() const override { return new Muncitor(*this); }
 
@@ -37,8 +39,8 @@ protected:
     }
 };
 
-// --- 2. ARCAS (Archer) ---
-// Specialized in: Ranged Attack, Low Armor
+// --- 2. ARCAS ---
+// un fel de sniper practic, ataca la distanta, dar nu are armura
 class Arcas : public Unitate {
     int range;
 public:
@@ -49,8 +51,8 @@ public:
 
     void actioneaza(CampDeLupta& harta) override {
         std::cout << "Arcasul tinteste zona (Raza: " << range << ")... ";
-        // In a real game, here we check distance to enemy units
-        // For now, we simulate behavior
+        // aici o sa adaug logica pentru cautarea pe harta in semicercul din fata arcasului de raza range,
+        // daca gaseste ceva (cladire, unitate inamica) in acest semicerc, va trage in el
         std::cout << "Nicio tinta in raza vizuala.\n";
     }
 
@@ -61,27 +63,24 @@ protected:
     }
 };
 
-// --- 3. CAVALER (Knight) ---
-// Specialized in: High Mobility, High Armor
+// --- 3. CAVALER ---
+// infanterie, damage mare, armura mare
 class Cavaler : public Unitate {
     bool chargeReady;
 public:
     Cavaler(const Pozitie& p, int id)
-        : Unitate("Cavaler", p, 120, 25, 3, id), chargeReady(true) {}
+        : Unitate("Cavaler", p, 120, 25, 10, id), chargeReady(true) {}
 
     Unitate* clone() const override { return new Cavaler(*this); }
 
     void actioneaza(CampDeLupta& harta) override {
-        // Knight logic: Move towards enemy base
-        // We can use the simple pathfinding from the map!
-
-        // Example: Charge towards (0,0) or (Width, Height) depending on ID
+        // logica: se muta catre o unitate, cand ajunge foarte aproape de ea, da in ea cu iataganul
         Pozitie target = (ownerID == 1) ? Pozitie(harta.getLatime()-1, harta.getInaltime()-1) : Pozitie(0,0);
 
         std::vector<Pozitie> path = harta.calculeazaCaleSimpla(Pozitie(getPozX(), getPozY()), target, 1);
 
         if (path.size() > 1) {
-            // Move 1 step
+            //se misca cate un pas
             this->deplaseaza(path[1].getX() - getPozX(), path[1].getY() - getPozY());
             std::cout << "Cavalerul galopeaza spre inamic!\n";
         } else {

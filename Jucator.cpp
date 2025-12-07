@@ -1,237 +1,202 @@
-//
-// Created by David on 30/10/2025.
-//
-
 #include "Jucator.h"
+#include "CampDeLupta.h"
 
-Unitate& Jucator::getUnitate(int index) {
-    try {
-        return unitati.at(index);
-    } catch (const std::out_of_range&) {
-        throw std::out_of_range("Eroare la accesarea unitatii: Index " + std::to_string(index) + " este in afara limitelor.");
-    }
-}
-
-void Jucator::adaugaResursa(const Resursa& r) {
-    for (Resursa& existing_r : inventar) {
-        if (existing_r.getNume() == r.getNume()) {
-            existing_r.adauga(r.getCantitate());
-            return;
-        }
-    }
-    inventar.push_back(r);
-}
-
-Resursa& Jucator::getResursa(const std::string& numeResursa) {
-    for (Resursa& r : inventar) {
-        if (r.getNume() == numeResursa) {
-            return r;
-        }
-    }
-    inventar.emplace_back(numeResursa, 0);
-    return inventar.back();
-}
-
-void Jucator::consumaResursa(const std::string& numeResursa, int cantitate) {
-        getResursa(numeResursa).consuma(cantitate);
-}
-
-void Jucator::adaugaCladire(const Cladire& c) {
-    cladiri.push_back(c);
-}
-
-void Jucator::adaugaUnitate(const Unitate& u) {
-    unitati.push_back(u);
-}
-
-void Jucator::unitateAtacaCladire(int unitateIndex, int cladireIndex) {
-    if (unitateIndex >= 0 && unitateIndex < (int)unitati.size() &&
-        cladireIndex >= 0 && cladireIndex < (int)cladiri.size()) {
-
-        unitati[unitateIndex].ataca(cladiri[cladireIndex]);
-
-        if (cladiri[cladireIndex].esteDistrusa()) {
-            std::cout << "Cladirea " << cladiri[cladireIndex].getNume() << " a fost distrusa!\n";
-            cladiri.erase(cladiri.begin() + cladireIndex);
-        }
-    } else {
-        std::cout << "Index de unitate sau cladire invalid.\n";
-    }
-}
-
-void Jucator::colecteazaProductia() {
-    std::cout << "\n--- Colectare productie pentru " << nume << " ---\n";
-
-    for (const Cladire& c : cladiri) {
-        if (!c.esteDistrusa()) {
-            Resursa resursaProdusa = c.produce();
-            this->adaugaResursa(resursaProdusa);
-            std::cout << "  Produs: " << resursaProdusa.getNume() << " (+" << resursaProdusa.getCantitate() << ") de la " << c.getNume() << "\n";
-        }
-    }
-
-    for (const Unitate& u : unitati) {
-        if (u.esteVie() && u.getRataColectare() > 0) {
-            Resursa resursaColectata = u.colecteaza();
-            this->adaugaResursa(resursaColectata);
-            std::cout << "  Colectat: " << resursaColectata.getNume() << " (+" << resursaColectata.getCantitate() << ") de la " << u.getNume() << "\n";
-        }
-    }
-}
-
-
-void Jucator::afiseazaInventar() const {
-    std::cout << "\nInventarul jucatorului " << nume << " (" << eraCurenta.getNumeAfisat() << "):\n";
-    if (inventar.empty()) {
-        std::cout << "  Inventar gol.\n";
-        return;
-    }
-    for (const Resursa& r : inventar) {
-        if (r.getCantitate() > 0)
-            std::cout << "  - " << r << "\n";
-    }
-}
-
-void Jucator::afiseazaCladiri() const {
-    std::cout << "\nCladirile jucatorului " << nume << ":\n";
-    if (cladiri.empty()) {
-        std::cout << "  Nicio cladire construita.\n";
-        return;
-    }
-    int i = 0;
-    for (const Cladire& c : cladiri) {
-        std::cout << "  [" << i++ << "] " << c << "\n";
-    }
-}
-
-void Jucator::afiseazaUnitati() const {
-    std::cout << "\nUnitatile jucatorului " << nume << ":\n";
-    if (unitati.empty()) {
-        std::cout << "  Nicio unitate creata.\n";
-        return;
-    }
-    int i = 0;
-    for (const Unitate& u : unitati) {
-        if (u.esteVie())
-            std::cout << "  [" << i++ << "] " << u << "\n";
-    }
+Jucator::Jucator(const std::string& n, int id) : nume(n), playerID(id) {
+    // Resursele de baza a fiecarui jucator
+    adaugaResursa("Aur", 100);
+    adaugaResursa("Lemn", 100);
+    adaugaResursa("Mancare", 100);
 }
 
 std::vector<Resursa> Jucator::getCostAvansare() const {
     std::vector<Resursa> cost;
+
     switch (eraCurenta.getNumeEra()) {
         case NumeEra::DARK_AGE:
-            cost.emplace_back("Lemn", 50);
-            cost.emplace_back("Piatra", 25);
+            cost.emplace_back("Mancare", 500);
             break;
         case NumeEra::FEUDAL_AGE:
-            cost.emplace_back("Lemn", 100);
-            cost.emplace_back("Piatra", 75);
+            cost.emplace_back("Mancare", 800);
+            cost.emplace_back("Aur", 200);
             break;
         case NumeEra::CASTLE_AGE:
-            cost.emplace_back("Lemn", 200);
-            cost.emplace_back("Piatra", 150);
+            cost.emplace_back("Mancare", 1000);
+            cost.emplace_back("Aur", 800);
             break;
         case NumeEra::IMPERIAL_AGE:
-        default:
             break;
     }
     return cost;
 }
 
 bool Jucator::verificaConditiiAvansare() const {
-    std::vector<Resursa> cost = getCostAvansare();
-    if (cost.empty()) return false;
+    if (eraCurenta.getNumeEra() == NumeEra::IMPERIAL_AGE) {
+        std::cout << "Deja esti in Era Imperiala!\n";
+        return false;
+    }
 
-    bool areSuficient = true;
-    for (const auto& r_cost : cost) {
-        bool gasit = false;
-        for (const auto& r_inv : inventar) {
-            if (r_inv.getNume() == r_cost.getNume() && r_inv.getCantitate() >= r_cost.getCantitate()) {
-                gasit = true;
-                break;
-            }
+    // verifica resurse pt avansare
+    std::vector<Resursa> costuri = getCostAvansare();
+    bool resurseSuficiente = true;
+
+    for (const auto& cost : costuri) {
+        int amCurent = getCantitateResursa(cost.getNume());
+        if (amCurent < cost.getCantitate()) {
+            std::cout << "Nu ai destul " << cost.getNume()
+                      << " (Ai: " << amCurent << ", Necesar: " << cost.getCantitate() << ")\n";
+            resurseSuficiente = false;
         }
-        if (!gasit) {
-            std::cout << "Conditie neindeplinita: lipsesc " << r_cost.getCantitate() << " " << r_cost.getNume() << ".\n";
-            areSuficient = false;
+    }
+
+    if (!resurseSuficiente) return false;
+
+    //verificare cladiri de care ai nevoie pt avansare
+    bool hasBarracks = false;
+    bool hasMarket = false;
+
+    for (const auto& c : cladiri) {
+        if (c->getNume() == "Cazarma") hasBarracks = true;
+        if (c->getNume() == "Piata") hasMarket = true;
+    }
+
+    if (eraCurenta.getNumeEra() == NumeEra::DARK_AGE && !hasBarracks) {
+        std::cout << "Ai nevoie de o Cazarma pentru a avansa in Feudal!\n";
+        return false;
+    }
+
+    return true;
+}
+
+void Jucator::consumaResursa(const std::string& numeResursa, int cantitate) {
+    for (auto& r : inventar) {
+        if (r.getNume() == numeResursa) {
+            r.consuma(cantitate);
+            return;
         }
-    }
-    return areSuficient;
-}
-
-Cladire &Jucator::getCladire(int index) {
-    try {
-        return cladiri.at(index);
-    } catch (const std::out_of_range&) {
-        // Interceptăm excepția generată de .at() și o putem re-arunca
-        // sau afișa un mesaj de eroare mai specific, dacă este necesar.
-        throw std::out_of_range("Eroare la accesarea cladirii: Index " + std::to_string(index) + " este in afara limitelor.");
-    }
-}
-
-void Jucator::mutaCladire(int index, int dx, int dy) {
-    if (index >= 0 && index < (int)cladiri.size()) {
-        cladiri[index].mutaCladirea(dx, dy);
-    } else {
-        std::cout << "Index de cladire invalid pentru mutare.\n";
-    }
-}
-
-void Jucator::mutaUnitate(int index, int dx, int dy) {
-    if (index >= 0 && index < (int)cladiri.size()) {
-        unitati[index].deplaseaza(dx, dy);
-    } else {
-        std::cout << "Index de cladire invalid pentru mutare.\n";
     }
 }
 
 void Jucator::avansareEra() {
-    if (!verificaConditiiAvansare()) {
-        std::cout << "\n--- AVANSARE ESEC --- Conditii de avansare in era nu sunt indeplinite!\n";
-        return;
+    if (verificaConditiiAvansare()) {
+        // consumarea resurselor
+        std::vector<Resursa> costuri = getCostAvansare();
+        for (const auto& cost : costuri) {
+            consumaResursa(cost.getNume(), cost.getCantitate());
+        }
+
+        // Avansarea efectiva a erei
+        eraCurenta.treciLaUrmatoarea();
+
+        std::cout << "\n************************************************\n";
+        std::cout << "FELICITARI! Ai avansat in " << eraCurenta.getNumeAfisat() << "!\n";
+        std::cout << "************************************************\n";
+
+        for (auto& unitate : unitati) {
+            unitate->buffStats(10);
+            std::cout << "Unitatea " << unitate->getNume() << " a primit upgrade de era.\n";
+        }
+    } else {
+        std::cout << "Nu poti avansa inca.\n";
+    }
+}
+
+
+void Jucator::adaugaCladire(std::shared_ptr<Cladire> c) {
+    cladiri.push_back(c);
+}
+
+void Jucator::adaugaUnitate(std::shared_ptr<Unitate> u) {
+    unitati.push_back(u);
+}
+
+
+
+void Jucator::joacaTura(CampDeLupta& harta) {
+    std::cout << "\n=== Tura lui " << nume << " (Echipa " << playerID << ") ===\n";
+
+    // logica pentru fiecare tura a jocului, cladirile isi joaca rolul, la fel si unitatile
+    for (auto& c : cladiri) {
+        if (!c->esteDistrusa()) {
+            c->actioneaza(harta);
+        }
     }
 
-    std::vector<Resursa> cost = getCostAvansare();
-    for (const auto& r_cost : cost) {
-        this->consumaResursa(r_cost.getNume(), r_cost.getCantitate());
+
+    for (auto& u : unitati) {
+        if (u->esteVie()) {
+            u->actioneaza(harta);
+        }
+    }
+    curataMorti();
+}
+
+
+
+void Jucator::colecteazaProductia() {
+    std::cout << "Se colecteaza resursele din cladiri...\n";
+
+    for (auto& c : cladiri) {
+
+        if (auto ferma = std::dynamic_pointer_cast<Ferma>(c)) {
+            int mancare = ferma->colecteazaResurse();
+            if (mancare > 0) {
+                adaugaResursa("Mancare", mancare);
+                std::cout << " -> Colectat " << mancare << " mancare de la o ferma.\n";
+            }
+        }
+    }
+}
+
+
+void Jucator::curataMorti() {
+    auto it_c = std::remove_if(cladiri.begin(), cladiri.end(),
+        [](const std::shared_ptr<Cladire>& c) { return c->esteDistrusa(); });
+
+    if (it_c != cladiri.end()) {
+        std::cout << "Eliminare cladiri distruse...\n";
+        cladiri.erase(it_c, cladiri.end());
     }
 
-    NumeEra eraNoua;
-    std::string numeNou;
-    int nivelNou;
+    auto it_u = std::remove_if(unitati.begin(), unitati.end(),
+        [](const std::shared_ptr<Unitate>& u) { return !u->esteVie(); });
 
-    switch (eraCurenta.getNumeEra()) {
-        case NumeEra::DARK_AGE:
-            eraNoua = NumeEra::FEUDAL_AGE;
-            numeNou = "FEUDAL_AGE";
-            nivelNou = 2;
-            break;
-        case NumeEra::FEUDAL_AGE:
-            eraNoua = NumeEra::CASTLE_AGE;
-            numeNou = "CASTLE_AGE";
-            nivelNou = 3;
-            break;
-        case NumeEra::CASTLE_AGE:
-            eraNoua = NumeEra::IMPERIAL_AGE;
-            numeNou = "IMPERIAL_AGE";
-            nivelNou = 4;
-            break;
-        case NumeEra::IMPERIAL_AGE:
-        default:
-            std::cout << "\n--- AVANSARE ESEC --- Esti deja in ultima era.\n";
+    if (it_u != unitati.end()) {
+        std::cout << "Eliminare unitati moarte...\n";
+        unitati.erase(it_u, unitati.end());
+    }
+}
+
+
+void Jucator::adaugaResursa(const std::string& numeRes, int cantitate) {
+    for (auto& r : inventar) {
+        if (r.getNume() == numeRes) {
+            r.adauga(cantitate);
             return;
+        }
     }
+    inventar.emplace_back(numeRes, cantitate);
+}
 
-    eraCurenta = Era(eraNoua, nivelNou, numeNou);
+int Jucator::getCantitateResursa(const std::string& numeRes) const {
+    for (const auto& r : inventar) {
+        if (r.getNume() == numeRes) {
+            return r.getCantitate();
+        }
+    }
+    return 0;
+}
 
-    std::cout << "\n**************************************************\n";
-    std::cout << "*** AVANSARE REUSITA! Jucatorul a intrat in " << eraCurenta.getNumeAfisat() << " ***\n";
-    std::cout << "**************************************************\n";
+void Jucator::afiseazaStatus() const {
+    std::cout << "Jucator: " << nume << " | Resurse: [ ";
+    for (const auto& r : inventar) {
+        std::cout << r.getNume() << ": " << r.getCantitate() << " ";
+    }
+    std::cout << "]\n";
+    std::cout << "  Armata: " << unitati.size() << " unitati\n";
+    std::cout << "  Cladiri: " << cladiri.size() << " structuri\n";
 }
 
 std::ostream& operator<<(std::ostream& os, const Jucator& j) {
-    os << "Jucator: " << j.nume
-       << " (Era: " << j.eraCurenta.getNumeAfisat() << ", Cladiri: " << j.cladiri.size() << ", Unitati: " << j.unitati.size() << ")";
+    j.afiseazaStatus();
     return os;
 }

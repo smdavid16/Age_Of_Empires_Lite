@@ -83,6 +83,10 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         turn.cpp
         turn.h
         Unitaticoncrete.h
+        Cazarma.cpp
+        Cazarma.h
+        Game.cpp
+        Game.h
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )

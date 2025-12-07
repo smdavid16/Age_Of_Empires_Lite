@@ -35,7 +35,6 @@ public:
 
     void afiseazaInfo(std::ostream& os) const;
 
-    // Getters
     [[nodiscard]] int getPozX() const { return poz.getX(); }
     [[nodiscard]] int getPozY() const { return poz.getY(); }
     [[nodiscard]] const std::string& getNume() const { return nume; }

@@ -27,8 +27,26 @@ const Tile& CampDeLupta::getTile(const Pozitie& pos) const {
 }
 
 
+bool CampDeLupta::esteAccesibil(int x, int y) const {
+    // 1. Bounds Check
+    if (x < 0 || x >= latime_placa || y < 0 || y >= inaltime_placa) return false;
+
+    // 2. Terrain Check
+    TileType type = tiles[x][y].getType();
+
+    // Define what blocks movement (Water, Walls, etc.)
+    if (type == TileType::Water ||
+        type == TileType::GardOrizontal ||
+        type == TileType::GardVertical ||
+        type == TileType::Mountain) {
+        return false;
+        }
+
+    return true;
+}
+
 void CampDeLupta::generateRandomMap() {
-    // 1. Initialize Base Terrain (Grass)
+    // Intai desenez toata harta cu iarba, fara resurse
     for (int x = 0; x < latime_placa; ++x) {
         for (int y = 0; y < inaltime_placa; ++y) {
             tiles[x][y] = Tile(TileType::Grass);
@@ -82,8 +100,8 @@ void CampDeLupta::generateRandomMap() {
         }
     }
 
-    // 4. Baze, patrate de latura bazaSize
-    int bazaSize = 15;
+    // Baze, patrate de latura bazaSize
+    int bazaSize = 10;
 
     auto construiesteBaza = [&](int x1, int y1, int x2, int y2, int gateSide) {
         if (x1 < 0) x1 = 0; if (y1 < 0) y1 = 0;

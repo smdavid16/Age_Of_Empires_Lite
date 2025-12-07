@@ -1,4 +1,5 @@
 #include "Unitate.h"
+#include "CampDeLupta.h"
 #include <algorithm> // for std::max
 
 Unitate::Unitate(std::string n, const Pozitie& p, int _hp, int _dmg, int _arm, int _id)
@@ -10,19 +11,39 @@ void Unitate::deplaseaza(int dx, int dy) {
     }
 }
 
+bool Unitate::incearcaDeplasare(int dx, int dy, const CampDeLupta& harta) {
+    if (!esteVie()) return false;
+
+    int xNou = poz.getX() + dx;
+    int yNou = poz.getY() + dy;
+
+    // Intreaba harta daca se poate muta pe pozitia noua
+    if (harta.esteAccesibil(xNou, yNou)) {
+        // Da, muta
+        poz.muta(dx, dy);
+        return true;
+    }
+
+    // Nu, stai pe loc
+    return false;
+}
+
 void Unitate::primesteDaune(int daune) {
-    // Armor mitigation logic
-    int dauneReale = std::max(1, daune - armura); 
+    int dauneReale = std::max(1, daune - armura);
     hp -= dauneReale;
     if (hp < 0) hp = 0;
 }
 
-// NVI Implementation
 void Unitate::afiseazaInfo(std::ostream& os) const {
     os << "[" << nume << "] (Echipa " << ownerID << ")";
-    this->doAfisare(os); // Polymorphic part
+    this->doAfisare(os);
     os << " | HP: " << hp << "/" << hpMax;
 }
+
+void Unitate::buffStats(int plus) {
+    hpMax+=plus;
+}
+
 
 void Unitate::doAfisare(std::ostream& os) const {
     os << " @ " << poz;
