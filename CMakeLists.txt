@@ -80,8 +80,8 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         MapRenderer.h
         Ferma.cpp
         Ferma.h
-        turn.cpp
-        turn.h
+        Turn.cpp
+        Turn.h
         Unitaticoncrete.h
         Cazarma.cpp
         Cazarma.h
