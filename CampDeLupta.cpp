@@ -104,7 +104,8 @@ void CampDeLupta::generateRandomMap() {
     int bazaSize = 10;
 
     auto construiesteBaza = [&](int x1, int y1, int x2, int y2, int gateSide) {
-        if (x1 < 0) x1 = 0; if (y1 < 0) y1 = 0;
+        if (x1 < 0) x1 = 0;
+        if (y1 < 0) y1 = 0;
         if (x2 >= latime_placa) x2 = latime_placa - 1;
         if (y2 >= inaltime_placa) y2 = inaltime_placa - 1;
 
