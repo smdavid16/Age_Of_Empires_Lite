@@ -1,5 +1,7 @@
 #include "Jucator.h"
 #include "CampDeLupta.h"
+#include "Exceptions.h"
+
 
 Jucator::Jucator(const std::string& n, int id) : nume(n), playerID(id) {
     // Resursele de baza a fiecarui jucator
@@ -42,8 +44,7 @@ bool Jucator::verificaConditiiAvansare() const {
     for (const auto& cost : costuri) {
         int amCurent = getCantitateResursa(cost.getNume());
         if (amCurent < cost.getCantitate()) {
-            std::cout << "Nu ai destul " << cost.getNume()
-                      << " (Ai: " << amCurent << ", Necesar: " << cost.getCantitate() << ")\n";
+            throw InsufficientResourcesException(cost.getNume(), cost.getCantitate(), amCurent);
             resurseSuficiente = false;
         }
     }
@@ -103,6 +104,7 @@ void Jucator::avansareEra() {
 
 void Jucator::adaugaCladire(std::shared_ptr<Cladire> c) {
     cladiri.push_back(c);
+    
 }
 
 void Jucator::adaugaUnitate(std::shared_ptr<Unitate> u) {

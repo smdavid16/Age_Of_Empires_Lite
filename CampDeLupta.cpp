@@ -1,6 +1,7 @@
 #include "CampDeLupta.h"
-#include <cstdlib> // for rand()
-#include <cmath>   // for abs()
+#include <cstdlib>
+#include <cmath>
+#include "Exceptions.h"
 
 CampDeLupta::CampDeLupta(int w, int h) : latime_placa(w), inaltime_placa(h) {
     tiles.resize(latime_placa);
@@ -14,31 +15,33 @@ CampDeLupta::CampDeLupta(int w, int h) : latime_placa(w), inaltime_placa(h) {
 
 Tile& CampDeLupta::getTile(const Pozitie& pos) {
     if (pos.getX() < 0 || pos.getX() >= latime_placa || pos.getY() < 0 || pos.getY() >= inaltime_placa) {
-        throw std::out_of_range("Pozitie is outside map bounds!");
+        throw OutOfBoundsException(pos.getX(), pos.getY(), latime_placa, inaltime_placa);
     }
     return tiles[pos.getX()][pos.getY()];
 }
 
 const Tile& CampDeLupta::getTile(const Pozitie& pos) const {
     if (pos.getX() < 0 || pos.getX() >= latime_placa || pos.getY() < 0 || pos.getY() >= inaltime_placa) {
-        throw std::out_of_range("Pozitie is outside map bounds!");
+        throw OutOfBoundsException(pos.getX(), pos.getY(), latime_placa, inaltime_placa);
     }
     return tiles[pos.getX()][pos.getY()];
 }
 
 
 bool CampDeLupta::esteAccesibil(int x, int y) const {
-    // 1. Bounds Check
-    if (x < 0 || x >= latime_placa || y < 0 || y >= inaltime_placa) return false;
+    // e inauntrul hartii?
+    if (x < 0 || x >= latime_placa || y < 0 || y >= inaltime_placa) {
+        throw InvalidPlacementException("Nu poti plasa acolo");
+        return false;
+    }
 
-    // 2. Terrain Check
+    // verifica teren
     TileType type = tiles[x][y].getType();
 
-    // Define what blocks movement (Water, Walls, etc.)
+    // pe ce nu ma pot deplasa
     if (type == TileType::Water ||
         type == TileType::GardOrizontal ||
-        type == TileType::GardVertical ||
-        type == TileType::Mountain) {
+        type == TileType::GardVertical) {
         return false;
         }
 

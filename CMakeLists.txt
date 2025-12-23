@@ -87,6 +87,7 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         Cazarma.h
         Game.cpp
         Game.h
+        Exceptions.h
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
