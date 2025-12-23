@@ -3,7 +3,7 @@
 #include "Game.h"
 
 int main() {
-    std::cout << "[Main] Starting Age of OOP..." << std::endl;
+    std::cout << "[Main] Incepem..." << std::endl;
 
     try {
         Game game;

@@ -1,9 +1,10 @@
 #include "Unitate.h"
 #include "CampDeLupta.h"
-#include <algorithm> // for std::max
+#include <algorithm>
 
 Unitate::Unitate(std::string n, const Pozitie& p, int _hp, int _dmg, int _arm, int _id)
-    : nume(std::move(n)), poz(p), hp(_hp), hpMax(_hp), damage(_dmg), armura(_arm), ownerID(_id) {}
+    : nume(std::move(n)), poz(p), hp(_hp), hpMax(_hp), damage(_dmg), armura(_arm), ownerID(_id),
+      destinatie(0,0), areTintaDeplasare(false){}
 
 void Unitate::deplaseaza(int dx, int dy) {
     if (esteVie()) {

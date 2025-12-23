@@ -92,6 +92,8 @@ void Game::processEvents() {
                     if (unitateSelectata->incearcaDeplasare(dx, dy, hartaLogic)) {
                         std::cout << "Unitate mutata.\n";
                     }
+                     std::cout << "Ordin: Mergi la " << clickPos.getX() << "," << clickPos.getY() << "\n";
+                     unitateSelectata->setDestinatie(clickPos.getX(), clickPos.getY());
                 }
             }
         }

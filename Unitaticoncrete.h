@@ -68,21 +68,38 @@ protected:
 class Cavaler : public Unitate {
     bool chargeReady;
 public:
-    Cavaler(const Pozitie& p, int id)
-        : Unitate("Cavaler", p, 120, 25, 10, id), chargeReady(true) {}
+    Cavaler(const Pozitie& p, int id) : Unitate("Cavaler", p, 120, 25, 3, id), chargeReady(true) {}
 
     Unitate* clone() const override { return new Cavaler(*this); }
 
     void actioneaza(CampDeLupta& harta) override {
-        // logica: se muta catre o unitate, cand ajunge foarte aproape de ea, da in ea cu iataganul
-        Pozitie target = (ownerID == 1) ? Pozitie(harta.getLatime()-1, harta.getInaltime()-1) : Pozitie(0,0);
+        // Se misca doar daca ii zic eu
+        if (areTintaDeplasare) {
 
-        std::vector<Pozitie> path = harta.calculeazaCaleSimpla(Pozitie(getPozX(), getPozY()), target, 1);
+            // am ajuns?
+            if (getPozX() == destinatie.getX() && getPozY() == destinatie.getY()) {
+                std::cout << "Cavalerul a ajuns la destinatie.\n";
+                areTintaDeplasare = false;
+                return;
+            }
 
-        if (path.size() > 1) {
-            //se misca cate un pas
-            this->deplaseaza(path[1].getX() - getPozX(), path[1].getY() - getPozY());
-            std::cout << "Cavalerul galopeaza spre inamic!\n";
+            // Calculez calea catre destinatie
+            std::vector<Pozitie> path = harta.calculeazaCaleSimpla(
+                Pozitie(getPozX(), getPozY()),
+                destinatie,
+                2
+            );
+
+            if (path.size() > 1) {
+                int dx = path[1].getX() - getPozX();
+                int dy = path[1].getY() - getPozY();
+
+                if (!this->incearcaDeplasare(dx, dy, harta)) {
+                    // S-a lovit de ceva
+                    areTintaDeplasare = false;
+                    std::cout << "Cavalerul s-a oprit (Obstacol).\n";
+                }
+            }
         } else {
             std::cout << "Cavalerul este in pozitie de lupta.\n";
         }

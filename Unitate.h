@@ -5,6 +5,8 @@
 #include <iostream>
 #include <memory>
 #include "Pozitie.h"
+#include <thread>
+#include <chrono>
 
 class CampDeLupta;
 class Cladire;
@@ -18,11 +20,17 @@ protected:
     int damage;
     int armura;
     int ownerID;
+    Pozitie destinatie;
+    bool areTintaDeplasare;
 
     virtual void doAfisare(std::ostream& os) const;
 
 public:
     Unitate(std::string n, const Pozitie& p, int hp, int dmg, int arm, int id);
+    void setDestinatie(int x, int y) {
+        destinatie = Pozitie(x, y);
+        areTintaDeplasare = true;
+    }
 
     virtual ~Unitate() = default;
 
@@ -35,6 +43,8 @@ public:
     void primesteDaune(int daune);
     void buffStats(int plus);
 
+
+
     [[nodiscard]] bool esteVie() const { return hp > 0; }
     [[nodiscard]] int getOwnerID() const { return ownerID; }
     [[nodiscard]] int getPozX() const { return poz.getX(); }
@@ -43,6 +53,8 @@ public:
 
     void afiseazaInfo(std::ostream& os) const;
     friend std::ostream& operator<<(std::ostream& os, const Unitate& u);
+
+    void traverseazaCalea(CampDeLupta& harta, const std::vector<Pozitie>& cale);
 };
 
 #endif //OOP_UNITATE_H
