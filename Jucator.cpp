@@ -126,7 +126,7 @@ void Jucator::joacaTura(CampDeLupta& harta) {
 
     for (auto& u : unitati) {
         if (u->esteVie()) {
-            u->actioneaza(harta);
+            u->actioneaza(harta, *this);
         }
     }
     curataMorti();
@@ -201,4 +201,8 @@ void Jucator::afiseazaStatus() const {
 std::ostream& operator<<(std::ostream& os, const Jucator& j) {
     j.afiseazaStatus();
     return os;
+}
+
+std::string Jucator::getNumeEra() const {
+    return eraCurenta.getNumeAfisat();
 }

@@ -4,6 +4,7 @@
 #include "UnitatiConcrete.h"
 #include "Ferma.h"
 #include "Turn.h"
+#include "Cazarma.h"
 
 const float SCROLL_SPEED = 600.0f;
 
@@ -20,11 +21,12 @@ Game::Game()
     mapRenderer.loadTextures("tileset.png");
     mapRenderer.buildVertexArray(hartaLogic);
 
-    // Adaug unitati, cladiri jucatorului cu care simulez functionalitati
+    // Adaug unitati, cladiri cu care incepe jocul
     auto ferma = std::make_shared<Ferma>(Pozitie(4, 4), 1);
     player.adaugaCladire(ferma);
     player.adaugaCladire(std::make_shared<Turn>(Pozitie(10, 8), 1));
     player.adaugaUnitate(std::make_shared<Muncitor>(Pozitie(5, 5), 1));
+    player.adaugaCladire(std::make_shared<Cazarma>(Pozitie(8, 8), 1));
     player.adaugaUnitate(std::make_shared<Cavaler>(Pozitie(6, 6), 1));
     player.adaugaResursa("Mancare", 200);
 }
@@ -48,74 +50,145 @@ Pozitie Game::getGridPositionFromMouse(sf::Vector2i pixelPos) {
 }
 
 void Game::processEvents() {
-    // procesarea evenimentelor din joc
     while (const std::optional event = window.pollEvent()) {
 
-        // ai inchis jocul?
+        // Inchis joc
         if (event->is<sf::Event::Closed>()) {
             window.close();
         }
 
-        // ai apasat mouse-ul undeva?
+        // Mouse
         else if (const auto* mousePress = event->getIf<sf::Event::MouseButtonPressed>()) {
 
+            sf::Vector2f uiMousePos(static_cast<float>(mousePress->position.x), static_cast<float>(mousePress->position.y));
 
-            Pozitie clickPos = getGridPositionFromMouse(sf::Mouse::getPosition(window));
+            // Pozitie mouse
+            Pozitie gridPos = getGridPositionFromMouse({mousePress->position.x, mousePress->position.y});
 
-            // click stanga: alege cladire/unitate
-            if (mousePress->button == sf::Mouse::Button::Left) {
-                unitateSelectata = nullptr;
-                cladireSelectata = nullptr;
+            // Verific daca am apasat ceva intr-un meniu ca sa nu duc click-ul pe harta
+            if (actionPanel.handleInput(uiMousePos, player)) {
+                continue; // Sarim restul while-ului
+            }
 
-                for (auto& u : player.getUnitati()) {
-                    if (u->getPozX() == clickPos.getX() && u->getPozY() == clickPos.getY()) {
-                        unitateSelectata = u;
-                        std::cout << "Unitate Selectata: " << u->getNume() << "\n";
-                        break;
+            // Plasez vreo cladire?
+            if (currentState == GameState::PlacingFarm) {
+                if (mousePress->button == sf::Mouse::Button::Left) {
+                    try {
+                        // Incerc sa cheltui resursele pentru cladire
+                        player.consumaResursa("Lemn", 50);
+                        player.adaugaCladire(std::make_shared<Ferma>(gridPos, player.getID()));
+                        std::cout << "Ferma construita cu succes la " << gridPos << "\n";
+                    }
+                    catch (const std::exception& e) {
+                        std::cout << "Constructie esuata: " << e.what() << "\n";
+                    }
+                    currentState = GameState::Normal;
+                }
+                else if (mousePress->button == sf::Mouse::Button::Right) {
+                    currentState = GameState::Normal;
+                    std::cout << "Constructie anulata.\n";
+                }
+            }
+            // Plasez turn?
+            else if (currentState == GameState::PlacingTower) {
+                if (mousePress->button == sf::Mouse::Button::Left) {
+                    try {
+                        player.consumaResursa("Aur", 50);
+                        player.consumaResursa("Lemn", 100);
+                        player.adaugaCladire(std::make_shared<Turn>(gridPos, player.getID()));
+                        std::cout << "Turn construit cu succes la " << gridPos << "\n";
+                    }
+                    catch (const std::exception& e) {
+                        std::cout << "Constructie esuata: " << e.what() << "\n";
+                    }
+                    currentState = GameState::Normal;
+                }
+                else if (mousePress->button == sf::Mouse::Button::Right) {
+                    currentState = GameState::Normal;
+                    std::cout << "Constructie anulata.\n";
+                }
+            }
+
+            // Modul normal (camera + miscat unitati)
+            else if (currentState == GameState::Normal) {
+
+                // Left Click: SELECT
+                if (mousePress->button == sf::Mouse::Button::Left) {
+                    unitateSelectata = nullptr;
+                    cladireSelectata = nullptr;
+                    actionPanel.clearSelection(); //sterge meniul cand nu mai am nevoie de el
+
+                    for (auto& u : player.getUnitati()) {
+                        if (u->getPozX() == gridPos.getX() && u->getPozY() == gridPos.getY()) {
+                            unitateSelectata = u;
+                            std::cout << "Unitate Selectata: " << u->getNume() << "\n";
+
+                            // Schimb modul de functionare din normal in construire
+                            actionPanel.setSelection(u.get(), player,
+                                [&](std::string type) {
+                                    if (type == "Farm") currentState = GameState::PlacingFarm;
+                                    if (type == "Tower") currentState = GameState::PlacingTower;
+                                    std::cout << "Mod Plasare Activat: " << type << "\n";
+                                }
+                            );
+                            break;
+                        }
+                    }
+
+                    // Verific cladiri (daca nu am unitati)
+                    if (!unitateSelectata) {
+                        for (auto& c : player.getCladiri()) {
+                            if (c->getPozX() == gridPos.getX() && c->getPozY() == gridPos.getY()) {
+                                cladireSelectata = c;
+                                std::cout << "Cladire Selectata: " << c->getNume() << "\n";
+
+                                actionPanel.setSelection(c.get(), player, nullptr);
+                                break;
+                            }
+                        }
                     }
                 }
-                if (!unitateSelectata) {
-                    for (auto& c : player.getCladiri()) {
-                        if (c->getPozX() == clickPos.getX() && c->getPozY() == clickPos.getY()) {
-                            cladireSelectata = c;
-                            std::cout << "Cladire Selectata: " << c->getNume() << "\n";
-                            break;
+
+                // Click dreapta = misca
+                else if (mousePress->button == sf::Mouse::Button::Right) {
+                    if (unitateSelectata) {
+                        int dx = gridPos.getX() - unitateSelectata->getPozX();
+                        int dy = gridPos.getY() - unitateSelectata->getPozY();
+
+                        // Incercam deplasarea
+                        if (unitateSelectata->incearcaDeplasare(dx, dy, hartaLogic)) {
+                            std::cout << "Unitate mutata la " << gridPos << "\n";
+                        } else {
+                            std::cout << "Deplasare blocata!\n";
                         }
                     }
                 }
             }
-            // click dreapta: muta unitatea
-            else if (mousePress->button == sf::Mouse::Button::Right) {
-                 if (unitateSelectata) {
-                    int dx = clickPos.getX() - unitateSelectata->getPozX();
-                    int dy = clickPos.getY() - unitateSelectata->getPozY();
-                    if (unitateSelectata->incearcaDeplasare(dx, dy, hartaLogic)) {
-                        std::cout << "Unitate mutata.\n";
-                    }
-                     std::cout << "Ordin: Mergi la " << clickPos.getX() << "," << clickPos.getY() << "\n";
-                     unitateSelectata->setDestinatie(clickPos.getX(), clickPos.getY());
-                }
-            }
         }
 
-        // verifica apasarile de taste
+        // Logica tastaturii (Space, R, escape)
         else if (const auto* keyPress = event->getIf<sf::Event::KeyPressed>()) {
-            // space: avanseaza "turn-ul" jocului
             if (keyPress->code == sf::Keyboard::Key::Space) {
                 player.joacaTura(hartaLogic);
                 player.colecteazaProductia();
                 player.afiseazaStatus();
+
+                hud.update(player);
             }
             else if (keyPress->code == sf::Keyboard::Key::R) {
                 hartaLogic.generateRandomMap();
                 mapRenderer.buildVertexArray(hartaLogic);
             }
+            else if (keyPress->code == sf::Keyboard::Key::Escape) {
+                currentState = GameState::Normal;
+                actionPanel.clearSelection();
+                unitateSelectata = nullptr;
+                cladireSelectata = nullptr;
+            }
         }
     }
 
     sf::Vector2f movement(0.f, 0.f);
-
-    // tastele pentru mutat camera
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) movement.y -= 1.f;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) movement.y += 1.f;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) movement.x -= 1.f;
@@ -164,6 +237,24 @@ void Game::render() {
         }
         window.draw(shape);
     }
+
+    if (currentState == GameState::PlacingFarm || currentState == GameState::PlacingTower) {
+        Pozitie mouseGrid = getGridPositionFromMouse(sf::Mouse::getPosition(window));
+        sf::Vector2f drawPos = mapRenderer.gridToPixel(mouseGrid);
+
+        sf::RectangleShape ghost(sf::Vector2f(TILE_SIZE, TILE_SIZE));
+        ghost.setPosition(drawPos);
+        ghost.setFillColor(sf::Color(0, 255, 0, 100)); // Transparent Green
+        window.draw(ghost);
+    }
+
+    window.setView(window.getDefaultView());
+
+    hud.update(player);
+
+    hud.draw(window);
+
+    actionPanel.draw(window);
 
     window.display();
 }

@@ -20,9 +20,9 @@ void MapRenderer::loadTextures(const std::string& fileName) {
     std::string fullPath = textureRoot + fileName;
 
     if (!textureSheet.loadFromFile(fullPath)) {
-        std::cerr << "[MapRenderer] Error: Failed to load texture: " << fullPath << std::endl;
+        std::cerr << "[MapRenderer] Nu am putut sa incarc texturile " << fullPath << std::endl;
     } else {
-        std::cout << "[MapRenderer] Texture loaded successfully: " << fullPath << std::endl;
+        std::cout << "[MapRenderer] Textura a fost incarcata cu succes: " << fullPath << std::endl;
     }
 }
 

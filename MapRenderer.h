@@ -15,7 +15,6 @@ private:
     sf::Texture textureSheet;
     sf::VertexArray vertices;
 
-    // Internal helper
     sf::Vector2i getTextureCoords(TileType type) const;
 
 public:

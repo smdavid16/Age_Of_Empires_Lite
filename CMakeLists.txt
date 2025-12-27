@@ -88,6 +88,10 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         Game.cpp
         Game.h
         Exceptions.h
+        Hud.cpp
+        Hud.h
+        ActionPanel.cpp
+        ActionPanel.h
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
@@ -127,7 +131,6 @@ copy_files(FILES tastatura.txt COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE
 set(ASSETS_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/texturi")
 set(ASSETS_DEST_DIR "${CMAKE_CURRENT_BINARY_DIR}/texturi")
 
-# 2. Command to copy the folder
 add_custom_command(TARGET oop POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${ASSETS_SOURCE_DIR}

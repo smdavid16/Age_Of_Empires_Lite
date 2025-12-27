@@ -52,6 +52,7 @@ public:
     void adaugaResursa(const std::string& nume, int cantitate);
     int getCantitateResursa(const std::string& nume) const;
     void afiseazaStatus() const;
+    [[nodiscard]] std::string getNumeEra() const;
 
     friend std::ostream& operator<<(std::ostream& os, const Jucator& j);
 };

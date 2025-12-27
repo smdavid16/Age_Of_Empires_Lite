@@ -17,14 +17,16 @@ public:
 
     Unitate* clone() const override { return new Muncitor(*this); }
 
-    void actioneaza(CampDeLupta& harta) override {
+    void actioneaza(CampDeLupta& harta, Jucator& player) override {
         TileType type = harta.getTile(Pozitie(getPozX(), getPozY())).getType();
 
         if (type == TileType::Forest) {
             resursaCurenta = "Lemn";
+            player.adaugaResursa("Lemn", capacitateColectare);
             std::cout << "Muncitorul taie copaci. (+ " << capacitateColectare << " Lemn)\n";
         } else if (type == TileType::GoldDeposit) {
             resursaCurenta = "Aur";
+            player.adaugaResursa("Aur", capacitateColectare);
             std::cout << "Muncitorul mineaza. (+ " << capacitateColectare << " Aur)\n";
         } else {
             resursaCurenta = "Nimic";
@@ -49,7 +51,7 @@ public:
 
     Unitate* clone() const override { return new Arcas(*this); }
 
-    void actioneaza(CampDeLupta& harta) override {
+    void actioneaza(CampDeLupta& harta, Jucator& player) override {
         std::cout << "Arcasul tinteste zona (Raza: " << range << ")... ";
         // aici o sa adaug logica pentru cautarea pe harta in semicercul din fata arcasului de raza range,
         // daca gaseste ceva (cladire, unitate inamica) in acest semicerc, va trage in el
@@ -72,7 +74,7 @@ public:
 
     Unitate* clone() const override { return new Cavaler(*this); }
 
-    void actioneaza(CampDeLupta& harta) override {
+    void actioneaza(CampDeLupta& harta, Jucator& player) override {
         // Se misca doar daca ii zic eu
         if (areTintaDeplasare) {
 

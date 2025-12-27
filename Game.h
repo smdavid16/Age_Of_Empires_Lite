@@ -11,6 +11,14 @@
 #include "Jucator.h"
 #include "Unitate.h"
 #include "Cladire.h"
+#include "Hud.h"
+#include "ActionPanel.h"
+
+enum class GameState {
+    Normal,
+    PlacingFarm,
+    PlacingTower
+};
 
 class Game {
 private:
@@ -19,6 +27,9 @@ private:
     MapRenderer mapRenderer;
     CampDeLupta hartaLogic;
     Jucator player;
+    Hud hud;
+    ActionPanel actionPanel;
+    GameState currentState = GameState::Normal;
 
     std::shared_ptr<Unitate> unitateSelectata;
     std::shared_ptr<Cladire> cladireSelectata;
