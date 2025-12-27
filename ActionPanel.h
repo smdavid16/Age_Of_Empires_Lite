@@ -34,7 +34,7 @@ public:
     ActionPanel();
 
     // Sets the buttons based on what is selected
-    void setSelection(Unitate* u, Jucator& p, std::function<void(std::string)> onBuildCommand);;
+    void setSelection(Unitate* u, Jucator& p, std::function<void(std::string)> onBuildCommand);
     void setSelection(Cladire* cladire, Jucator& player, std::function<void(std::string)> onBuildRequest);
     void clearSelection();
 

@@ -5,7 +5,7 @@
 #include <iostream>
 #include <memory>
 #include "Pozitie.h"
-#include <thread>
+#include <vector>
 #include <chrono>
 
 class CampDeLupta;
