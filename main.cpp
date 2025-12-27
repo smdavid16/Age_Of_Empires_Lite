@@ -25,7 +25,6 @@ int main() {
     catch (const InvalidPlacementException& e) {
         std::cerr << "\n!!! Nu poti sa plasezi aici !!!\n";
         std::cerr << e.what() << "\n";
-        // Logic recovery might be possible here, but for now we exit/log
         return -1;
     }
 

@@ -123,3 +123,14 @@ endif()
 copy_files(FILES tastatura.txt COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
 # copy_files(FILES tastatura.txt config.json DIRECTORY images sounds COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
 # copy_files(DIRECTORY images sounds COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
+
+set(ASSETS_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/texturi")
+set(ASSETS_DEST_DIR "${CMAKE_CURRENT_BINARY_DIR}/texturi")
+
+# 2. Command to copy the folder
+add_custom_command(TARGET oop POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${ASSETS_SOURCE_DIR}
+        ${ASSETS_DEST_DIR}
+        COMMENT "Copiez texturi in locul corect..."
+)

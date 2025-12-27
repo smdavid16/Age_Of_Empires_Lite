@@ -154,7 +154,7 @@ void Game::render() {
         if (!u->esteVie()) continue;
         sf::Vector2f pos = mapRenderer.gridToPixel(Pozitie(u->getPozX(), u->getPozY()));
 
-        sf::CircleShape shape((TILE_SIZE / 2.0f) - 5);
+        sf::CircleShape shape((TILE_SIZE / 2.0f)-5);
         shape.setPosition({pos.x + 5, pos.y + 5});
         shape.setFillColor(sf::Color::Red);
 
