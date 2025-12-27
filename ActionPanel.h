@@ -42,6 +42,7 @@ public:
     bool handleInput(const sf::Vector2f& mousePos, Jucator& player);
 
     void draw(sf::RenderWindow& window);
+    void showGlobalPanel(Jucator& player);
 };
 
 #endif //OOP_ACTIONPANEL_H

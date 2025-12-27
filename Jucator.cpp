@@ -45,7 +45,6 @@ bool Jucator::verificaConditiiAvansare() const {
         int amCurent = getCantitateResursa(cost.getNume());
         if (amCurent < cost.getCantitate()) {
             throw InsufficientResourcesException(cost.getNume(), cost.getCantitate(), amCurent);
-            resurseSuficiente = false;
         }
     }
 
@@ -62,6 +61,11 @@ bool Jucator::verificaConditiiAvansare() const {
 
     if (eraCurenta.getNumeEra() == NumeEra::DARK_AGE && !hasBarracks) {
         std::cout << "Ai nevoie de o Cazarma pentru a avansa in Feudal!\n";
+        return false;
+    }
+
+    if (eraCurenta.getNumeEra() == NumeEra::FEUDAL_AGE && !hasMarket) {
+        std::cout << "Ai nevoie de o Piata pentru a avansa in Castle!\n";
         return false;
     }
 

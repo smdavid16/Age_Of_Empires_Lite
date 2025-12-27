@@ -20,7 +20,7 @@ private:
     std::string numeAfisat;
 
 public:
-    explicit Era(NumeEra n = NumeEra::DARK_AGE, int niv = 1, const std::string& afisat = "Era Pietrei")
+    explicit Era(NumeEra n = NumeEra::DARK_AGE, int niv = 1, const std::string& afisat = "Dark Age")
         : nume(n), nivel(niv), numeAfisat(afisat) {}
 
     void treciLaUrmatoarea() {

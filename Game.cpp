@@ -117,6 +117,7 @@ void Game::processEvents() {
                     unitateSelectata = nullptr;
                     cladireSelectata = nullptr;
                     actionPanel.clearSelection(); //sterge meniul cand nu mai am nevoie de el
+                    actionPanel.showGlobalPanel(player);
 
                     for (auto& u : player.getUnitati()) {
                         if (u->getPozX() == gridPos.getX() && u->getPozY() == gridPos.getY()) {

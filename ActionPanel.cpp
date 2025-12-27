@@ -136,3 +136,50 @@ void ActionPanel::draw(sf::RenderWindow& window) {
         window.draw(btn.label);
     }
 }
+void ActionPanel::showGlobalPanel(Jucator& player) {
+    buttons.clear();
+
+    std::string currentEra = player.getNumeEra();
+
+    std::string nextEraName;
+
+    if (currentEra == "Imperial Age") {
+        return;
+    }
+    else if (currentEra == "Dark Age") {
+        nextEraName = "Feudal Age";
+    }
+    else if (currentEra == "Feudal Age") {
+        nextEraName = "Castle Age";
+    }
+    else if (currentEra == "Castle Age") {
+        nextEraName = "Imperial Age";
+    }
+    else {
+        nextEraName = "Unknown Era";
+    }
+
+
+    std::vector<Resursa> costs = player.getCostAvansare();
+
+    int costFood = 0;
+    int costGold = 0;
+    int costWood = 0;
+
+    for (const auto& r : costs) {
+        if (r.getNume() == "Mancare") costFood = r.getCantitate();
+        if (r.getNume() == "Aur") costGold = r.getCantitate();
+        if (r.getNume() == "Lemn") costWood = r.getCantitate();
+    }
+
+    addButton("Advance to\n" + nextEraName, costGold, costWood, costFood, [&player, this]() {
+        try {
+            player.avansareEra();
+
+            this->showGlobalPanel(player);
+        }
+        catch (const std::exception& e) {
+            std::cout << "[UI] Nu poti avansa: " << e.what() << "\n";
+        }
+    });
+}
