@@ -4,12 +4,11 @@
 
 #include "ActionPanel.h"
 #include <iostream>
-
-// Include concrete classes for dynamic casting / checking types
 #include "UnitatiConcrete.h"
 #include "Ferma.h"
 #include "Turn.h"
 #include "Cazarma.h"
+#include "Spadasin.h"
 
 ActionPanel::ActionPanel() {
     if (!font.openFromFile("fonts/opensans.ttf")) {
@@ -74,7 +73,7 @@ void ActionPanel::setSelection(Cladire* cladire, Jucator& player, std::function<
     if (dynamic_cast<Ferma*>(cladire)) {
         // Antrenez un muncitor
         // Cost: 0 aur, 50 lemn, 50 mancare
-        addButton("Train Worker", 0, 50, 50, [&player, cladire]() {
+        addButton("Train Muncitor", 0, 50, 50, [&player, cladire]() {
             try {
                 // Plateste
                 player.consumaResursa("Lemn", 50);
@@ -96,7 +95,7 @@ void ActionPanel::setSelection(Cladire* cladire, Jucator& player, std::function<
     else if (dynamic_cast<Turn*>(cladire)) {
         // Antreneaza cavaler
         // Costs: 50 Gold, 50 Wood, 100 Food
-        addButton("Train Knight", 50, 50, 100, [&player, cladire]() {
+        addButton("Train Cavaler", 50, 50, 100, [&player, cladire]() {
             try {
                 player.consumaResursa("Aur", 100);
                 player.consumaResursa("Lemn", 50);
@@ -114,7 +113,7 @@ void ActionPanel::setSelection(Cladire* cladire, Jucator& player, std::function<
     }
     else if (dynamic_cast<Cazarma*>(cladire)) {
         //Arcas: 40 aur, lemn 30, mancare 30
-        addButton("Train Archer", 40, 30, 30, [&player, cladire]() {
+        addButton("Train Arcas", 40, 30, 30, [&player, cladire]() {
             try {
                 player.consumaResursa("Lemn", 30);
                 player.consumaResursa("Aur", 40);
@@ -123,6 +122,22 @@ void ActionPanel::setSelection(Cladire* cladire, Jucator& player, std::function<
                 Pozitie spawnPos(cladire->getPozX() - 1, cladire->getPozY()); // Spawn on other side
                 player.adaugaUnitate(std::make_shared<Arcas>(spawnPos, player.getID()));
                 std::cout << "Arcas antrenat!\n";
+            } catch (const std::exception& e) {
+                std::cout << "Eroare antrenare: " << e.what() << "\n";
+            }
+        });
+
+
+        //spawn SPADASIN
+        // Cost: 60 Food, 20 Gold
+        addButton("Train Spadasin", 20, 0, 60, [&player, cladire]() {
+            try {
+                player.consumaResursa("Mancare", 60);
+                player.consumaResursa("Aur", 20);
+
+                Pozitie spawnPos(cladire->getPozX() + 1, cladire->getPozY());
+                player.adaugaUnitate(std::make_shared<Spadasin>(spawnPos, player.getID()));
+                std::cout << "Spadasin antrenat!\n";
             } catch (const std::exception& e) {
                 std::cout << "Eroare antrenare: " << e.what() << "\n";
             }
