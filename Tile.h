@@ -37,7 +37,6 @@ public:
     // Getters
     [[nodiscard]] TileType getType() const { return type; }
 
-    void setType(TileType newType);
 };
 
 #endif // OOP_TILE_H

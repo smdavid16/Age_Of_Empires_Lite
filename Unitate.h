@@ -47,7 +47,7 @@ public:
     virtual void actioneaza(CampDeLupta& harta, Jucator& player, std::vector<std::shared_ptr<Unitate>>& inamici) = 0;
 
     [[nodiscard]] bool esteVie() const { return hp > 0; }
-    [[nodiscard]] int getOwnerID() const { return ownerID; }
+    //[[nodiscard]] int getOwnerID() const { return ownerID; }
     [[nodiscard]] int getPozX() const { return poz.getX(); }
     [[nodiscard]] int getPozY() const { return poz.getY(); }
     [[nodiscard]] const std::string& getNume() const { return nume; }

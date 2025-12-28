@@ -42,7 +42,3 @@ Tile::Tile(TileType t) :
     }
 }
 
-void Tile::setType(TileType newType) {
-    this->type = newType;
-    Tile(*this);
-}

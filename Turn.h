@@ -20,7 +20,6 @@ public:
 
     void actioneaza(CampDeLupta& harta) override;
 
-    void atacaTinta(Cladire* inamic);
 };
 
 #endif //OOP_TURN_H

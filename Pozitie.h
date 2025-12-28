@@ -16,8 +16,6 @@ public:
     void muta(int dx, int dy) { x += dx; y += dy; }
     [[nodiscard]]int getX() const { return x; }
     [[nodiscard]]int getY() const { return y; }
-    void setX(int xnou) {x = xnou;}
-    void setY(int ynou) {y = ynou;}
 
     friend std::ostream& operator<<(std::ostream& os, const Pozitie& p);
     Pozitie& operator=(const Pozitie& other){

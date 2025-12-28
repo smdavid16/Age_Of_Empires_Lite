@@ -45,10 +45,3 @@ int Turn::getRangeEfectiv(const CampDeLupta& harta) const {
     
     return range + bonus;
 }
-
-void Turn::atacaTinta(Cladire* inamic) {
-    if (inamic && !inamic->esteDistrusa()) {
-        std::cout << "Turnul trage o salva de sageti catre " << inamic->getNume() << "!\n";
-        inamic->primesteDaune(this->damage);
-    }
-}
