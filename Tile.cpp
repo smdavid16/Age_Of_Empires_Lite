@@ -46,25 +46,3 @@ void Tile::setType(TileType newType) {
     this->type = newType;
     Tile(*this);
 }
-
-void Tile::decreaseResource(int amount) {
-    if (resourceAmount > 0) {
-        resourceAmount -= amount;
-        if (resourceAmount < 0) {
-            resourceAmount = 0;
-        }
-
-        if (resourceAmount == 0) {
-            if (this->type == TileType::Forest) {
-                this->setType(TileType::Grass);
-            }
-            if (this->type == TileType::StoneDeposit) {
-                this->setType(TileType::Grass);
-            }
-            if (this->type == TileType::GoldDeposit) {
-                this->setType(TileType::Grass);
-            }
-
-        }
-    }
-}

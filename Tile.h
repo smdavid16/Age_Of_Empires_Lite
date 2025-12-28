@@ -38,7 +38,6 @@ public:
     [[nodiscard]] TileType getType() const { return type; }
 
     void setType(TileType newType);
-    void decreaseResource(int amount);
 };
 
 #endif // OOP_TILE_H

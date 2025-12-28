@@ -162,50 +162,6 @@ void CampDeLupta::generateRandomMap() {
 }
 
 
-
-std::vector<Pozitie> CampDeLupta::calculeazaCaleSimpla(const Pozitie& start, const Pozitie& end, int pasi) const {
-    std::vector<Pozitie> cale;
-
-
-    if (start.getX() < 0 || start.getX() >= latime_placa || start.getY() < 0 || start.getY() >= inaltime_placa ||
-        end.getX() < 0 || end.getX() >= latime_placa || end.getY() < 0 || end.getY() >= inaltime_placa) {
-        return cale;
-    }
-
-    cale.push_back(start);
-    Pozitie current = start;
-
-    for (int i = 0; i < pasi; ++i) {
-        if (current.getX() == end.getX() && current.getY() == end.getY()) {
-            break;
-        }
-
-        int dx = end.getX() - current.getX();
-        int dy = end.getY() - current.getY();
-
-        Pozitie next = current;
-
-
-        if (std::abs(dx) > std::abs(dy)) {
-            int directie = (dx > 0) ? 1 : -1;
-            next.setX(current.getX() + directie);
-        } else {
-            int directie = (dy > 0) ? 1 : -1;
-            next.setY(current.getY() + directie);
-        }
-
-        if (next.getX() >= 0 && next.getX() < latime_placa &&
-            next.getY() >= 0 && next.getY() < inaltime_placa)
-        {
-            current = next;
-            cale.push_back(current);
-        } else {
-            break;
-        }
-    }
-    return cale;
-}
-
 std::ostream& operator<<(std::ostream& os, const CampDeLupta& c) {
     os << "CampDeLupta: " << c.latime_placa << "x" << c.inaltime_placa << " tiles.";
     return os;

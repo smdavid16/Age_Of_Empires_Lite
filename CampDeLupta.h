@@ -30,7 +30,7 @@ public:
     [[nodiscard]] const Tile& getTile(const Pozitie& pos) const;
 
 
-    [[nodiscard]] std::vector<Pozitie> calculeazaCaleSimpla(const Pozitie& start, const Pozitie& end, int pasi = 10) const;
+
 
     friend std::ostream& operator<<(std::ostream& os, const CampDeLupta& c);
 };

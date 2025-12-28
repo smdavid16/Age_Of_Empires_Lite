@@ -29,10 +29,7 @@ protected:
 
 public:
     Unitate(std::string n, const Pozitie& p, int hp, int dmg, int arm, int id);
-    void setDestinatie(int x, int y) {
-        destinatie = Pozitie(x, y);
-        areTintaDeplasare = true;
-    }
+
 
     virtual ~Unitate() = default;
 
