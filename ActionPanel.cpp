@@ -4,7 +4,7 @@
 
 #include "ActionPanel.h"
 #include <iostream>
-#include "UnitatiConcrete.h"
+#include "Unitaticoncrete.h"
 #include "Ferma.h"
 #include "Turn.h"
 #include "Cazarma.h"
@@ -51,7 +51,7 @@ void ActionPanel::addButton(const std::string& text, int aur, int lemn, int manc
     });
 }
 
-void ActionPanel::setSelection(Unitate* unitate, Jucator& player, std::function<void(std::string)> onBuildRequest) {
+void ActionPanel::setSelection(Unitate* unitate, [[maybe_unused]] Jucator& player, std::function<void(std::string)> onBuildRequest) {
     buttons.clear();
     if (dynamic_cast<Muncitor*>(unitate)) {
 
@@ -65,7 +65,7 @@ void ActionPanel::setSelection(Unitate* unitate, Jucator& player, std::function<
     }
 }
 
-void ActionPanel::setSelection(Cladire* cladire, Jucator& player, std::function<void(std::string)> onBuildRequest) {
+void ActionPanel::setSelection(Cladire* cladire, Jucator& player, [[maybe_unused]] std::function<void(std::string)> onBuildRequest) {
     buttons.clear();
     if (!cladire) return;
 
@@ -150,7 +150,7 @@ void ActionPanel::clearSelection() {
     buttons.clear();
 }
 
-bool ActionPanel::handleInput(const sf::Vector2f& mousePos, Jucator& player) {
+bool ActionPanel::handleInput(const sf::Vector2f& mousePos,  [[maybe_unused]] Jucator& player) {
     for (auto& btn : buttons) {
         if (btn.shape.getGlobalBounds().contains(mousePos)) {
             btn.callback();
