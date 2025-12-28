@@ -39,7 +39,6 @@ public:
     [[nodiscard]] const std::string& getNume() const { return nume; }
     [[nodiscard]] int getHPCurent() const { return hpCurent; }
     [[nodiscard]] int getHPMaxim() const { return hpMaxim; }
-    [[nodiscard]] int getOwnerID() const { return ownerID; }
 
     void primesteDaune(int daune);
     [[nodiscard]] bool esteDistrusa() const;
