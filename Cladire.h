@@ -43,7 +43,6 @@ public:
 
     void primesteDaune(int daune);
     [[nodiscard]] bool esteDistrusa() const;
-    void mutaCladirea(int dx, int dy);
 
     friend std::ostream& operator<<(std::ostream& os, const Cladire& c);
 };

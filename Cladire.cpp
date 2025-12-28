@@ -12,11 +12,6 @@ bool Cladire::esteDistrusa() const {
     return hpCurent <= 0;
 }
 
-void Cladire::mutaCladirea(int dx, int dy) {
-    poz.muta(dx, dy);
-}
-
-
 void Cladire::afiseazaInfo(std::ostream& os) const {
     os << "[" << nume << "] (Team " << ownerID << ")";
     this->doAfisare(os);

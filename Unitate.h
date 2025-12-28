@@ -40,7 +40,6 @@ public:
 
     bool incearcaDeplasare(int dx, int dy, const CampDeLupta& harta);
 
-    void deplaseaza(int dx, int dy);
     void primesteDaune(int daune);
     void buffStats(int plus);
     double distantaCatre(const Unitate& alta) const {

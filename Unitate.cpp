@@ -6,12 +6,6 @@ Unitate::Unitate(std::string n, const Pozitie& p, int _hp, int _dmg, int _arm, i
     : nume(std::move(n)), poz(p), hp(_hp), hpMax(_hp), damage(_dmg), armura(_arm), ownerID(_id),
       destinatie(0,0), areTintaDeplasare(false){}
 
-void Unitate::deplaseaza(int dx, int dy) {
-    if (esteVie()) {
-        poz.muta(dx, dy);
-    }
-}
-
 bool Unitate::incearcaDeplasare(int dx, int dy, const CampDeLupta& harta) {
     if (!esteVie()) return false;
 

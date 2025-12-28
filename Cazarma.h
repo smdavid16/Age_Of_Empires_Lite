@@ -20,8 +20,6 @@ public:
         else std::cout << "[Cazarma] In asteptare ordine.\n";
     }
 
-    void setComandaRecrutare(bool stare) { antreneaza = stare; }
-
 protected:
     void doAfisare(std::ostream& os) const override {
         Cladire::doAfisare(os);
