@@ -15,7 +15,7 @@ public:
 
     Cladire* clone() const override { return new Cazarma(*this); }
 
-    void actioneaza(CampDeLupta& harta) override {
+    void actioneaza([[maybe_unused]] CampDeLupta& harta) override {
         if(antreneaza) std::cout << "[Cazarma] Antrenament unitate in progres...\n";
         else std::cout << "[Cazarma] In asteptare ordine.\n";
     }

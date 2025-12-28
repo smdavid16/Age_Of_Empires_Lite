@@ -18,7 +18,7 @@ public:
 
     Unitate* clone() const override { return new Spadasin(*this); }
 
-    void actioneaza(CampDeLupta& harta, Jucator& player, std::vector<std::shared_ptr<Unitate>>& inamici) override {
+    void actioneaza([[maybe_unused]] CampDeLupta& harta, [[maybe_unused]] Jucator& player, std::vector<std::shared_ptr<Unitate>>& inamici) override {
         bool hit = false;
         // Melee range check (1.5 covers diagonals)
         for (auto& inamic : inamici) {

@@ -51,7 +51,7 @@ public:
 
     Unitate* clone() const override { return new Arcas(*this); }
 
-    void actioneaza(CampDeLupta& harta, Jucator& player, [[maybe_unused]] std::vector<std::shared_ptr<Unitate>>& inamici) override {
+    void actioneaza([[maybe_unused]] CampDeLupta& harta, [[maybe_unused]] Jucator& player, [[maybe_unused]] std::vector<std::shared_ptr<Unitate>>& inamici) override {
         bool fired = false;
         for (auto& inamic : inamici) {
             if (!inamic->esteVie()) continue;
@@ -86,7 +86,7 @@ public:
 
     Unitate* clone() const override { return new Cavaler(*this); }
 
-    void actioneaza(CampDeLupta& harta, Jucator& player, std::vector<std::shared_ptr<Unitate>>& inamici) override {
+    void actioneaza([[maybe_unused]] CampDeLupta& harta, [[maybe_unused]] Jucator& player, std::vector<std::shared_ptr<Unitate>>& inamici) override {
         bool hit = false;
         for (auto& inamic : inamici) {
             if (inamic->esteVie() && distantaCatre(*inamic) <= 1.5) {

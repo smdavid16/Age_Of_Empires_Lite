@@ -206,7 +206,7 @@ void Game::processEvents() {
     camera.move(movement * SCROLL_SPEED * 0.05f);
 }
 
-void Game::update(float dt) {
+void Game::update([[maybe_unused]] float dt) {
 }
 
 void Game::render() {
