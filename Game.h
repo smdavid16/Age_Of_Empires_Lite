@@ -27,6 +27,7 @@ private:
     MapRenderer mapRenderer;
     CampDeLupta hartaLogic;
     Jucator player;
+    Jucator enemy;
     Hud hud;
     ActionPanel actionPanel;
     GameState currentState = GameState::Normal;

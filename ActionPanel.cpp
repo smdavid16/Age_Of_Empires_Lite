@@ -9,6 +9,7 @@
 #include "UnitatiConcrete.h"
 #include "Ferma.h"
 #include "Turn.h"
+#include "Cazarma.h"
 
 ActionPanel::ActionPanel() {
     if (!font.openFromFile("fonts/opensans.ttf")) {
@@ -111,7 +112,24 @@ void ActionPanel::setSelection(Cladire* cladire, Jucator& player, std::function<
             }
         });
     }
+    else if (dynamic_cast<Cazarma*>(cladire)) {
+        //Arcas: 40 aur, lemn 30, mancare 30
+        addButton("Train Archer", 40, 30, 30, [&player, cladire]() {
+            try {
+                player.consumaResursa("Lemn", 30);
+                player.consumaResursa("Aur", 40);
+                player.consumaResursa("Mancare", 30);
+
+                Pozitie spawnPos(cladire->getPozX() - 1, cladire->getPozY()); // Spawn on other side
+                player.adaugaUnitate(std::make_shared<Arcas>(spawnPos, player.getID()));
+                std::cout << "Arcas antrenat!\n";
+            } catch (const std::exception& e) {
+                std::cout << "Eroare antrenare: " << e.what() << "\n";
+            }
+        });
+    }
 }
+
 
 void ActionPanel::clearSelection() {
     buttons.clear();

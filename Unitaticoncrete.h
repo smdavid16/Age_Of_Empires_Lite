@@ -17,7 +17,7 @@ public:
 
     Unitate* clone() const override { return new Muncitor(*this); }
 
-    void actioneaza(CampDeLupta& harta, Jucator& player) override {
+    void actioneaza(CampDeLupta& harta, Jucator& player, [[maybe_unused]] std::vector<std::shared_ptr<Unitate>>& inamici) override {
         TileType type = harta.getTile(Pozitie(getPozX(), getPozY())).getType();
 
         if (type == TileType::Forest) {
@@ -30,7 +30,7 @@ public:
             std::cout << "Muncitorul mineaza. (+ " << capacitateColectare << " Aur)\n";
         } else {
             resursaCurenta = "Nimic";
-            std::cout << "Muncitorul someaza (Teren fara resurse).\n";
+            std::cout << "Muncitorul sta (Teren fara resurse).\n";
         }
     }
 
@@ -42,7 +42,7 @@ protected:
 };
 
 // --- 2. ARCAS ---
-// un fel de sniper practic, ataca la distanta, dar nu are armura
+// un fel de sniper practic, ataca la distanta, dar nu are armura, trage in cercul de raza range
 class Arcas : public Unitate {
     int range;
 public:
@@ -51,11 +51,23 @@ public:
 
     Unitate* clone() const override { return new Arcas(*this); }
 
-    void actioneaza(CampDeLupta& harta, Jucator& player) override {
-        std::cout << "Arcasul tinteste zona (Raza: " << range << ")... ";
-        // aici o sa adaug logica pentru cautarea pe harta in semicercul din fata arcasului de raza range,
-        // daca gaseste ceva (cladire, unitate inamica) in acest semicerc, va trage in el
-        std::cout << "Nicio tinta in raza vizuala.\n";
+    void actioneaza(CampDeLupta& harta, Jucator& player, [[maybe_unused]] std::vector<std::shared_ptr<Unitate>>& inamici) override {
+        bool fired = false;
+        for (auto& inamic : inamici) {
+            if (!inamic->esteVie()) continue;
+
+            double dist = distantaCatre(*inamic);
+
+            if (dist <= range) {
+                std::cout << " -> Tinta reperata: " << inamic->getNume() << " la distanta " << dist << "!\n";
+                std::cout << " -> Arcasul trage!\n";
+
+                inamic->primesteDaune(this->damage);
+                fired = true;
+                return;
+            }
+        }
+        if (!fired) std::cout << " -> Nicio tinta in raza (" << range << ").\n";
     }
 
 protected:
@@ -74,43 +86,23 @@ public:
 
     Unitate* clone() const override { return new Cavaler(*this); }
 
-    void actioneaza(CampDeLupta& harta, Jucator& player) override {
-        // Se misca doar daca ii zic eu
-        if (areTintaDeplasare) {
-
-            // am ajuns?
-            if (getPozX() == destinatie.getX() && getPozY() == destinatie.getY()) {
-                std::cout << "Cavalerul a ajuns la destinatie.\n";
-                areTintaDeplasare = false;
-                return;
+    void actioneaza(CampDeLupta& harta, Jucator& player, std::vector<std::shared_ptr<Unitate>>& inamici) override {
+        bool hit = false;
+        for (auto& inamic : inamici) {
+            if (inamic->esteVie() && distantaCatre(*inamic) <= 1.5) {
+                std::cout << " -> CAVALERUL ATACA " << inamic->getNume() << "!\n";
+                inamic->primesteDaune(this->damage);
+                hit = true;
+                break;
             }
-
-            // Calculez calea catre destinatie
-            std::vector<Pozitie> path = harta.calculeazaCaleSimpla(
-                Pozitie(getPozX(), getPozY()),
-                destinatie,
-                2
-            );
-
-            if (path.size() > 1) {
-                int dx = path[1].getX() - getPozX();
-                int dy = path[1].getY() - getPozY();
-
-                if (!this->incearcaDeplasare(dx, dy, harta)) {
-                    // S-a lovit de ceva
-                    areTintaDeplasare = false;
-                    std::cout << "Cavalerul s-a oprit (Obstacol).\n";
-                }
-            }
-        } else {
-            std::cout << "Cavalerul este in pozitie de lupta.\n";
         }
+        if (!hit) std::cout << "Cavaler: Patruleaza.\n";
     }
 
 protected:
     void doAfisare(std::ostream& os) const override {
         Unitate::doAfisare(os);
-        os << " | Tip: Cavalry";
+        os << " | Tip: Cavaler";
     }
 };
 

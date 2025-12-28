@@ -72,8 +72,6 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         Unitate.h
         Jucator.cpp
         Jucator.h
-        GameSimulator.cpp
-        GameSimulator.h
         Tile.cpp
         Tile.h
         MapRenderer.cpp

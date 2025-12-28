@@ -117,7 +117,7 @@ void Jucator::adaugaUnitate(std::shared_ptr<Unitate> u) {
 
 
 
-void Jucator::joacaTura(CampDeLupta& harta) {
+void Jucator::joacaTura(CampDeLupta& harta, Jucator& inamic) {
     std::cout << "\n=== Tura lui " << nume << " (Echipa " << playerID << ") ===\n";
 
     // logica pentru fiecare tura a jocului, cladirile isi joaca rolul, la fel si unitatile
@@ -127,10 +127,11 @@ void Jucator::joacaTura(CampDeLupta& harta) {
         }
     }
 
+    auto& inamici = inamic.getUnitatiMutable();
 
     for (auto& u : unitati) {
         if (u->esteVie()) {
-            u->actioneaza(harta, *this);
+            u->actioneaza(harta, *this, inamici);
         }
     }
     curataMorti();

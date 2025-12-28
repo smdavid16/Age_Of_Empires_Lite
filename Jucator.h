@@ -39,11 +39,12 @@ public:
 
     [[nodiscard]] const std::vector<std::shared_ptr<Unitate>>& getUnitati() const { return unitati; }
     [[nodiscard]] const std::vector<std::shared_ptr<Cladire>>& getCladiri() const { return cladiri; }
+    std::vector<std::shared_ptr<Unitate>>& getUnitatiMutable() { return unitati; }
 
     void adaugaCladire(std::shared_ptr<Cladire> c);
     void adaugaUnitate(std::shared_ptr<Unitate> u);
 
-    void joacaTura(CampDeLupta& harta);
+    void joacaTura(CampDeLupta& harta, Jucator& inamic);
 
     void colecteazaProductia();
     void curataMorti();

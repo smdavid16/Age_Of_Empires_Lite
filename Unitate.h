@@ -7,6 +7,7 @@
 #include "Pozitie.h"
 #include <vector>
 #include <chrono>
+#include <cmath>
 
 class CampDeLupta;
 class Cladire;
@@ -37,14 +38,17 @@ public:
 
     [[nodiscard]] virtual Unitate* clone() const = 0;
 
-    virtual void actioneaza(CampDeLupta& harta, Jucator& player) = 0;
     bool incearcaDeplasare(int dx, int dy, const CampDeLupta& harta);
 
     void deplaseaza(int dx, int dy);
     void primesteDaune(int daune);
     void buffStats(int plus);
+    double distantaCatre(const Unitate& alta) const {
+        return std::sqrt(std::pow(this->getPozX() - alta.getPozX(), 2) +
+                         std::pow(this->getPozY() - alta.getPozY(), 2));
+    }
 
-
+    virtual void actioneaza(CampDeLupta& harta, Jucator& player, std::vector<std::shared_ptr<Unitate>>& inamici) = 0;
 
     [[nodiscard]] bool esteVie() const { return hp > 0; }
     [[nodiscard]] int getOwnerID() const { return ownerID; }
@@ -54,8 +58,6 @@ public:
 
     void afiseazaInfo(std::ostream& os) const;
     friend std::ostream& operator<<(std::ostream& os, const Unitate& u);
-
-    void traverseazaCalea(CampDeLupta& harta, const std::vector<Pozitie>& cale);
 };
 
 #endif //OOP_UNITATE_H

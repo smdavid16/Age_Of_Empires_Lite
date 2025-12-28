@@ -10,8 +10,9 @@ const float SCROLL_SPEED = 600.0f;
 
 Game::Game()
     : window(sf::VideoMode({1920, 1080}), "Age of Empires Lite"),
-      hartaLogic(500, 1000),
+      hartaLogic(100, 150),
       player("David", 1),
+      enemy("calculator", 2),
       unitateSelectata(nullptr),
       cladireSelectata(nullptr)
 {
@@ -26,9 +27,16 @@ Game::Game()
     player.adaugaCladire(ferma);
     player.adaugaCladire(std::make_shared<Turn>(Pozitie(10, 8), 1));
     player.adaugaUnitate(std::make_shared<Muncitor>(Pozitie(5, 5), 1));
+    player.adaugaUnitate(std::make_shared<Arcas>(Pozitie(6, 4), 1));
     player.adaugaCladire(std::make_shared<Cazarma>(Pozitie(8, 8), 1));
     player.adaugaUnitate(std::make_shared<Cavaler>(Pozitie(6, 6), 1));
     player.adaugaResursa("Mancare", 200);
+    enemy.adaugaCladire(ferma);
+    enemy.adaugaCladire(std::make_shared<Turn>(Pozitie(20, 8), 1));
+    enemy.adaugaUnitate(std::make_shared<Muncitor>(Pozitie(21, 5), 1));
+    enemy.adaugaCladire(std::make_shared<Cazarma>(Pozitie(23, 8), 1));
+    enemy.adaugaUnitate(std::make_shared<Cavaler>(Pozitie(22, 6), 1));
+    enemy.adaugaResursa("Mancare", 200);
 }
 
 void Game::run() {
@@ -170,7 +178,7 @@ void Game::processEvents() {
         // Logica tastaturii (Space, R, escape)
         else if (const auto* keyPress = event->getIf<sf::Event::KeyPressed>()) {
             if (keyPress->code == sf::Keyboard::Key::Space) {
-                player.joacaTura(hartaLogic);
+                player.joacaTura(hartaLogic, enemy);
                 player.colecteazaProductia();
                 player.afiseazaStatus();
 
@@ -223,8 +231,39 @@ void Game::render() {
         window.draw(shape);
     }
 
+    // Randeaza cladiri (inca cu patratele in loc de texturi pentru test)
+    for (const auto& c : enemy.getCladiri()) {
+        if (c->esteDistrusa()) continue;
+        sf::Vector2f pos = mapRenderer.gridToPixel(Pozitie(c->getPozX(), c->getPozY()));
+
+        sf::RectangleShape shape(sf::Vector2f(TILE_SIZE - 10, TILE_SIZE - 10));
+        shape.setPosition({pos.x + 5, pos.y + 5});
+        shape.setFillColor(sf::Color::Blue);
+
+        if (c == cladireSelectata) {
+            shape.setOutlineThickness(3);
+            shape.setOutlineColor(sf::Color::Yellow);
+        }
+        window.draw(shape);
+    }
+
     // Randeaza unitati (inca cu cercuri in loc de texturi pentru test)
     for (const auto& u : player.getUnitati()) {
+        if (!u->esteVie()) continue;
+        sf::Vector2f pos = mapRenderer.gridToPixel(Pozitie(u->getPozX(), u->getPozY()));
+
+        sf::CircleShape shape((TILE_SIZE / 2.0f)-5);
+        shape.setPosition({pos.x + 5, pos.y + 5});
+        shape.setFillColor(sf::Color::Red);
+
+        if (u == unitateSelectata) {
+            shape.setOutlineThickness(3);
+            shape.setOutlineColor(sf::Color::Green);
+        }
+        window.draw(shape);
+    }
+
+    for (const auto& u : enemy.getUnitati()) {
         if (!u->esteVie()) continue;
         sf::Vector2f pos = mapRenderer.gridToPixel(Pozitie(u->getPozX(), u->getPozY()));
 
