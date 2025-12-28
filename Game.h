@@ -3,8 +3,6 @@
 
 #include <SFML/Graphics.hpp>
 #include <memory>
-#include <vector>
-#include <optional>
 
 #include "CampDeLupta.h"
 #include "MapRenderer.h"
@@ -38,6 +36,7 @@ private:
     void processEvents();
     void update(float dt);
     void render();
+    void drawHealthBar(sf::RenderWindow& window, const sf::Vector2f& pos, int hp, int maxHp);
 
     Pozitie getGridPositionFromMouse(sf::Vector2i pixelPos);
 

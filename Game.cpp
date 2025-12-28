@@ -206,6 +206,37 @@ void Game::processEvents() {
     camera.move(movement * SCROLL_SPEED * 0.05f);
 }
 
+void Game::drawHealthBar(sf::RenderWindow& window, const sf::Vector2f& pos, int hp, int maxHp) {
+    if (hp <= 0) return;
+
+    const float barWidth = 50.0f;
+    const float barHeight = 6.0f;
+    const float yOffset = -10.0f;
+
+    // Ratia cu care e umpluta bara de viata
+    float ratio = static_cast<float>(hp) / static_cast<float>(maxHp);
+    if (ratio < 0) ratio = 0;
+    if (ratio > 1) ratio = 1;
+
+    // Fundal
+    sf::RectangleShape bgRect({barWidth, barHeight});
+    bgRect.setPosition({pos.x + (TILE_SIZE - barWidth) / 2.0f, pos.y + yOffset});
+    bgRect.setFillColor(sf::Color(50, 0, 0)); // Rosu inchis
+    bgRect.setOutlineColor(sf::Color::Black);
+    bgRect.setOutlineThickness(1.0f);
+
+    sf::RectangleShape fgRect({barWidth * ratio, barHeight});
+    fgRect.setPosition(bgRect.getPosition());
+
+    // Daca are multa viata, bara = verde, altfel galben, sau rosu
+    if (ratio > 0.6f) fgRect.setFillColor(sf::Color::Green);
+    else if (ratio > 0.3f) fgRect.setFillColor(sf::Color::Yellow);
+    else fgRect.setFillColor(sf::Color::Red);
+
+    window.draw(bgRect);
+    window.draw(fgRect);
+}
+
 void Game::update([[maybe_unused]] float dt) {
 }
 
@@ -229,6 +260,8 @@ void Game::render() {
             shape.setOutlineColor(sf::Color::Yellow);
         }
         window.draw(shape);
+
+        drawHealthBar(window, pos, c->getHPCurent(), c->getHPMaxim());
     }
 
     // Randeaza cladiri (inca cu patratele in loc de texturi pentru test)
@@ -245,6 +278,8 @@ void Game::render() {
             shape.setOutlineColor(sf::Color::Yellow);
         }
         window.draw(shape);
+
+        drawHealthBar(window, pos, c->getHPCurent(), c->getHPMaxim());
     }
 
     // Randeaza unitati (inca cu cercuri in loc de texturi pentru test)
@@ -261,6 +296,8 @@ void Game::render() {
             shape.setOutlineColor(sf::Color::Green);
         }
         window.draw(shape);
+
+        drawHealthBar(window, pos, u->getHp(), u->getHpMax());
     }
 
     for (const auto& u : enemy.getUnitati()) {
@@ -276,6 +313,8 @@ void Game::render() {
             shape.setOutlineColor(sf::Color::Green);
         }
         window.draw(shape);
+
+        drawHealthBar(window, pos, u->getHp(), u->getHpMax());
     }
 
     if (currentState == GameState::PlacingFarm || currentState == GameState::PlacingTower) {

@@ -3,7 +3,6 @@
 
 #include <string>
 #include <iostream>
-#include <memory> // For smart pointers
 #include "Pozitie.h"
 
 class CampDeLupta;
@@ -39,6 +38,7 @@ public:
     [[nodiscard]] int getPozY() const { return poz.getY(); }
     [[nodiscard]] const std::string& getNume() const { return nume; }
     [[nodiscard]] int getHPCurent() const { return hpCurent; }
+    [[nodiscard]] int getHPMaxim() const { return hpMaxim; }
     [[nodiscard]] int getOwnerID() const { return ownerID; }
 
     void primesteDaune(int daune);
