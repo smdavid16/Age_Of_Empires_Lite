@@ -134,7 +134,7 @@ void Game::processEvents() {
 
                             // Schimb modul de functionare din normal in construire
                             actionPanel.setSelection(u.get(), player,
-                                [&](std::string type) {
+                                [&](const std::string& type) {
                                     if (type == "Farm") currentState = GameState::PlacingFarm;
                                     if (type == "Tower") currentState = GameState::PlacingTower;
                                     std::cout << "Mod Plasare Activat: " << type << "\n";
@@ -206,7 +206,7 @@ void Game::processEvents() {
     camera.move(movement * SCROLL_SPEED * 0.05f);
 }
 
-void Game::drawHealthBar(sf::RenderWindow& window, const sf::Vector2f& pos, int hp, int maxHp) {
+void Game::drawHealthBar(const sf::Vector2f& pos, int hp, int maxHp) {
     if (hp <= 0) return;
 
     const float barWidth = 50.0f;
@@ -261,7 +261,7 @@ void Game::render() {
         }
         window.draw(shape);
 
-        drawHealthBar(window, pos, c->getHPCurent(), c->getHPMaxim());
+        drawHealthBar(pos, c->getHPCurent(), c->getHPMaxim());
     }
 
     // Randeaza cladiri (inca cu patratele in loc de texturi pentru test)
@@ -279,7 +279,7 @@ void Game::render() {
         }
         window.draw(shape);
 
-        drawHealthBar(window, pos, c->getHPCurent(), c->getHPMaxim());
+        drawHealthBar(pos, c->getHPCurent(), c->getHPMaxim());
     }
 
     // Randeaza unitati (inca cu cercuri in loc de texturi pentru test)
@@ -297,7 +297,7 @@ void Game::render() {
         }
         window.draw(shape);
 
-        drawHealthBar(window, pos, u->getHp(), u->getHpMax());
+        drawHealthBar(pos, u->getHp(), u->getHpMax());
     }
 
     for (const auto& u : enemy.getUnitati()) {
@@ -314,7 +314,7 @@ void Game::render() {
         }
         window.draw(shape);
 
-        drawHealthBar(window, pos, u->getHp(), u->getHpMax());
+        drawHealthBar(pos, u->getHp(), u->getHpMax());
     }
 
     if (currentState == GameState::PlacingFarm || currentState == GameState::PlacingTower) {

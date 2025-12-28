@@ -36,7 +36,7 @@ private:
     void processEvents();
     void update(float dt);
     void render();
-    void drawHealthBar(sf::RenderWindow& window, const sf::Vector2f& pos, int hp, int maxHp);
+    void drawHealthBar(const sf::Vector2f& pos, int hp, int maxHp);
 
     Pozitie getGridPositionFromMouse(sf::Vector2i pixelPos);
 
