@@ -52,7 +52,6 @@ public:
     Unitate* clone() const override { return new Arcas(*this); }
 
     void actioneaza([[maybe_unused]] CampDeLupta& harta, [[maybe_unused]] Jucator& player, [[maybe_unused]] std::vector<std::shared_ptr<Unitate>>& inamici) override {
-        bool fired = false;
         for (auto& inamic : inamici) {
             if (!inamic->esteVie()) continue;
 
@@ -63,11 +62,9 @@ public:
                 std::cout << " -> Arcasul trage!\n";
 
                 inamic->primesteDaune(this->damage);
-                fired = true;
                 return;
             }
         }
-        if (!fired) std::cout << " -> Nicio tinta in raza (" << range << ").\n";
     }
 
 protected:
@@ -80,9 +77,8 @@ protected:
 // --- 3. CAVALER ---
 // infanterie, damage mare, armura mare
 class Cavaler : public Unitate {
-    bool chargeReady;
 public:
-    Cavaler(const Pozitie& p, int id) : Unitate("Cavaler", p, 120, 25, 3, id), chargeReady(true) {}
+    Cavaler(const Pozitie& p, int id) : Unitate("Cavaler", p, 120, 25, 3, id) {}
 
     Unitate* clone() const override { return new Cavaler(*this); }
 
