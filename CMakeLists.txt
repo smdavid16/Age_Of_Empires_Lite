@@ -132,7 +132,14 @@ set(ASSETS_DEST_DIR "${CMAKE_CURRENT_BINARY_DIR}/texturi")
 
 add_custom_command(TARGET oop POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${ASSETS_SOURCE_DIR}
-        ${ASSETS_DEST_DIR}
-        COMMENT "Copiez texturi in locul corect..."
+        ${CMAKE_SOURCE_DIR}/texturi
+        $<TARGET_FILE_DIR:oop>/texturi
+        COMMENT "Copiez texturi in build"
+)
+
+add_custom_command(TARGET oop POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/fonts
+        $<TARGET_FILE_DIR:oop>/fonts
+        COMMENT "Copiez fonts in build"
 )
