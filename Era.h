@@ -47,7 +47,6 @@ public:
     }
 
     [[nodiscard]] NumeEra getNumeEra() const { return nume; }
-    [[nodiscard]] int getNivel() const { return nivel; }
     [[nodiscard]] const std::string& getNumeAfisat() const { return numeAfisat; }
 };
 

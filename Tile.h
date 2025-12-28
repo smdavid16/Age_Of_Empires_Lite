@@ -36,9 +36,6 @@ public:
 
     // Getters
     [[nodiscard]] TileType getType() const { return type; }
-    [[nodiscard]] bool getIsWalkable() const { return isWalkable; }
-    [[nodiscard]] int getMovementCost() const { return movementCost; }
-    [[nodiscard]] int getResourceAmount() const { return resourceAmount; }
 
     void setType(TileType newType);
     void decreaseResource(int amount);

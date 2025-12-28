@@ -32,7 +32,6 @@ bool CampDeLupta::esteAccesibil(int x, int y) const {
     // e inauntrul hartii?
     if (x < 0 || x >= latime_placa || y < 0 || y >= inaltime_placa) {
         throw InvalidPlacementException("Nu poti plasa acolo");
-        return false;
     }
 
     // verifica teren
