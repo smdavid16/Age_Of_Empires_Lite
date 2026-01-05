@@ -2,9 +2,6 @@
 #define OOP_CAMPDELUPTA_H
 
 #include <vector>
-#include <iostream>
-#include <cmath>
-#include <stdexcept>
 #include <fstream>
 #include "Pozitie.h"
 #include "Tile.h"

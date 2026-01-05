@@ -12,11 +12,10 @@
 #include <string>
 #include "Jucator.h"
 
-// A simple structure for a Button
 struct Button {
     sf::RectangleShape shape;
     sf::Text label;
-    std::function<void()> callback; // The function to run when clicked
+    std::function<void()> callback;
     int costAur;
     int costLemn;
     int costMancare;
@@ -33,12 +32,10 @@ private:
 public:
     ActionPanel();
 
-    // Sets the buttons based on what is selected
     void setSelection(Unitate* u, Jucator& p, std::function<void(std::string)> onBuildCommand);
     void setSelection(Cladire* cladire, Jucator& player, std::function<void(std::string)> onBuildRequest);
     void clearSelection();
 
-    // Returns true if a button was clicked
     bool handleInput(const sf::Vector2f& mousePos, Jucator& player);
 
     void draw(sf::RenderWindow& window);

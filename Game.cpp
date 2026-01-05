@@ -13,8 +13,8 @@ Game::Game()
       hartaLogic(100, 150),
       player("David", 1),
       enemy("calculator", 2),
-      unitateSelectata(nullptr),
       currentTurn(1),
+      unitateSelectata(nullptr),
       cladireSelectata(nullptr)
 {
     window.setFramerateLimit(60);
@@ -413,58 +413,40 @@ void Game::render() {
 void Game::saveGame() {
     std::ofstream file("savegame.txt");
     if (!file.is_open()) {
-        std::cout << "[ERROR] Could not save game!\n";
+        std::cout << "[EROARE] Nu am putut salva jocul!\n";
         return;
     }
 
     file << currentTurn << "\n";
 
-    // 2. Map
     hartaLogic.saveMap(file);
 
     // 3. Players
     player.savePlayer(file);
     enemy.savePlayer(file);
 
-    std::cout << "[SYSTEM] Game Saved Successfully!\n";
+    std::cout << "[SYSTEM] Joc Salvat cu Succes!\n";
     file.close();
 }
 
 void Game::loadGame() {
-    std::cout << "[LOAD] Starting Load Process...\n";
+    std::cout << "[LOAD] Incep sa incarc save-ul...\n";
 
     std::ifstream file("savegame.txt");
     if (!file.is_open()) {
-        std::cout << "[ERROR] No save file found!\n";
+        std::cout << "[ERROR] Nu am gasit fisier de save!\n";
         return;
     }
 
-    // 1. SAFEGUARD POINTERS
-    std::cout << "[LOAD] Clearing Selections...\n";
     unitateSelectata = nullptr;
     cladireSelectata = nullptr;
     actionPanel.clearSelection();
-
-    // 2. GLOBAL DATA
-    std::cout << "[LOAD] Loading Turn Data...\n";
     file >> currentTurn;
-
-    // 3. MAP
-    std::cout << "[LOAD] Loading Map...\n";
     hartaLogic.loadMap(file);
     mapRenderer.buildVertexArray(hartaLogic);
-
-    // 4. PLAYERS
-    std::cout << "[LOAD] Loading Player...\n";
     player.loadPlayer(file);
-
-    std::cout << "[LOAD] Loading Enemy...\n";
     enemy.loadPlayer(file);
-
-    // 5. HUD UPDATE
-    std::cout << "[LOAD] Updating HUD...\n";
     hud.update(player, currentTurn);
-
-    std::cout << "[SYSTEM] Game Loaded Successfully!\n";
+    std::cout << "[LOAD] Save incarcat cu succes!";
     file.close();
 }

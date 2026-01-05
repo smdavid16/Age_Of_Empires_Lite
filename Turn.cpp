@@ -39,7 +39,7 @@ int Turn::getRangeEfectiv(const CampDeLupta& harta) const {
             bonus = 3; // Avantaj de Teren inalt
         }
     } catch (const std::out_of_range& e) {
-        std::cerr << "[Warning] Turn logic error: " << e.what()
+        std::cerr << "[EROARE] Eroare turn: " << e.what()
                   << " at position (" << getPozX() << "," << getPozY() << ")\n";
     }
     

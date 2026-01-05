@@ -6,14 +6,12 @@ int main() {
     std::cout << "[Main] Starting Age of OOP..." << std::endl;
 
     try {
-        // Run the game
         Game game;
         game.run();
     }
     catch (const OutOfBoundsException& e) {
         std::cerr << "\n!!! ARDEEEEEEE!!!\n";
         std::cerr << e.what() << "\n";
-        // This is fatal, we exit
         return -1;
     }
     catch (const InsufficientResourcesException& e) {

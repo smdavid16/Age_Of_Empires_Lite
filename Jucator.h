@@ -4,13 +4,10 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include <iostream>
-#include <algorithm>
 #include "Era.h"
 #include "Resursa.h"
 #include "Unitate.h"
 #include "Cladire.h"
-#include "Ferma.h"
 
 class CampDeLupta;
 

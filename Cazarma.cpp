@@ -25,10 +25,6 @@ void Cazarma::actioneaza(CampDeLupta& harta) {
     bool nearForest = false;
     bool nearMountain = false;
 
-    // --- DEBUG START ---
-    std::cout << "\n[DEBUG] Cazarma (P David"  << ") at Grid X:" << getPozX() << " Y:" << getPozY() << "\n";
-    // --- DEBUG END ---
-
     for (int dy = -5; dy <= 5; ++dy) {
         for (int dx = -5; dx <= 5; ++dx) {
             if (dx == 0 && dy == 0) continue;
@@ -57,13 +53,13 @@ void Cazarma::actioneaza(CampDeLupta& harta) {
 
     std::stringstream ss;
     ss << "Score: " << strategicScore << "\n";
-    if (nearForest) ss << "- Forest Cover\n";
-    if (nearMountain) ss << "- High Ground\n";
-    if (!nearForest && !nearMountain) ss << "- Open Field";
+    if (nearForest) ss << "- Padure\n";
+    if (nearMountain) ss << "- Munti\n";
+    if (!nearForest && !nearMountain) ss << "- Camp";
 
     lastReport = ss.str();
 
-    std::cout << "[Cazarma] Report Generated: " << lastReport << "\n";
+    std::cout << "[Cazarma] Report Generat: " << lastReport << "\n";
 }
 
 void Cazarma::doAfisare(std::ostream& os) const {

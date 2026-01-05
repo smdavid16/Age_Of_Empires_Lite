@@ -212,33 +212,26 @@ std::ostream& operator<<(std::ostream& os, const Jucator& j) {
 }
 
 void Jucator::savePlayer(std::ofstream& file) const {
-    // 1. Save Resources
     file << getCantitateResursa("Aur") << " "
          << getCantitateResursa("Lemn") << " "
          << getCantitateResursa("Mancare") << " "
          << getCantitateResursa("Piatra") << "\n";
 
-    // 2. Save Units count
     file << unitati.size() << "\n";
     for (const auto& u : unitati) {
-        // Format: Name X Y HP OwnerID
         file << u->getNume() << " " << u->getPozX() << " " << u->getPozY()
              << " " << u->getHp() << " " << u->getOwnerID() << "\n";
     }
 
-    // 3. Save Buildings count
     file << cladiri.size() << "\n";
     for (const auto& c : cladiri) {
-        // Format: Name X Y HP OwnerID
         file << c->getNume() << " " << c->getPozX() << " " << c->getPozY()
              << " " << c->getHPCurent() << " " << playerID << "\n";
     }
 }
 
 void Jucator::loadPlayer(std::ifstream& file) {
-    reset(); // Clear old data
-
-    // 1. Load Resources
+    reset();
     int g, w, f, s;
     file >> g >> w >> f >> s;
     adaugaResursa("Aur", g);
@@ -246,7 +239,6 @@ void Jucator::loadPlayer(std::ifstream& file) {
     adaugaResursa("Mancare", f);
     adaugaResursa("Piatra", s);
 
-    // 2. Load Units
     int numUnits;
     file >> numUnits;
     for (int i = 0; i < numUnits; ++i) {
@@ -256,21 +248,18 @@ void Jucator::loadPlayer(std::ifstream& file) {
 
         std::shared_ptr<Unitate> u = nullptr;
 
-        // Factory Logic
         if (name == "Muncitor") u = std::make_shared<Muncitor>(Pozitie(x, y), owner);
         else if (name == "Arcas") u = std::make_shared<Arcas>(Pozitie(x, y), owner);
         else if (name == "Spadasin") u = std::make_shared<Spadasin>(Pozitie(x, y), owner);
         else if (name == "Cavaler") u = std::make_shared<Cavaler>(Pozitie(x, y), owner);
 
         if (u) {
-            // HP hack: damage the unit until HP matches saved HP
             int damageToTake = u->getHpMax() - hp;
             if(damageToTake > 0) u->primesteDaune(damageToTake);
             unitati.push_back(u);
         }
     }
 
-    // 3. Load Buildings
     int numBuildings;
     file >> numBuildings;
     for (int i = 0; i < numBuildings; ++i) {
