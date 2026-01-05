@@ -1,8 +1,62 @@
-## Age Of Empires Lite
+# Age of Empires Lite 
 
-### Scurtă descriere
-Acest proiect are ca scop implementarea unui joc in stilul Age Of Empires folosind concepte de Programare Orientata pe Obiecte. Age Of Empires este un Real Time Strategy (RTS) bazat pe avansarea unei societăți pe parcursul a mai multor epoci (age): Dark Age, Feudal Age, Castle Age și Imperial Age. Avansarea între epoci se face prin acumularea de materiale și clădiri care se pot folosi pentru instruirea unei armate și a "industriei" necesare menținerii armatei. Jocul are ca scop ultim cucerirea tuturor celorlalte societăți vecine pentru a deveni cea mai puternică dintre ele.
+Un joc de strategie în timp real (RTS) simplificat, bazat pe ture, dezvoltat în C++ folosind librăria grafică SFML.
 
+## 🎮 Cum se joacă
+
+Jocul se desfășoară pe o hartă generată procedural. Scopul este să îți gestionezi resursele, să construiești o bază și să îți dezvolți armata pentru a domina harta.
+
+### 🗺️ Controale (Tastatură & Mouse)
+
+| Tastă / Acțiune | Funcționalitate |
+| :--- | :--- |
+| **W, A, S, D** | Mișcă camera pe hartă (Scroll). |
+| **Click Stânga** | Selectează o unitate sau o clădire. Interacționează cu butoanele din meniu. Plasează o clădire (în modul construire). |
+| **Click Dreapta** | Deplasează unitatea selectată la poziția cursorului. Anulează plasarea unei clădiri. |
+| **SPACE** | **Încheie Tura (Next Turn)**. Colectează resurse, regenerează puncte de mișcare și actualizează logica jocului. |
+| **R** | Regenerează harta complet aleatoriu (Restart). |
+| **ESC** | Deselectează unitatea curentă / Iese din meniul de construire. |
+| **F5** | **Salvează Jocul** (Quick Save în `savegame.txt`). |
+| **F6** | **Încarcă Jocul** (Quick Load din `savegame.txt`). |
+| **F10** | Închide jocul. |
+
+---
+
+## 🏗️ Mecanici de Joc
+
+### 1. Economie și Resurse
+Jucătorul începe cu un stoc de resurse (**Aur, Lemn, Mâncare, Piatră**).
+* **Fermele** produc mâncare automat la fiecare tură (apăsând `SPACE`).
+* Anumite unități sau clădiri necesită resurse specifice pentru a fi construite.
+
+### 2. Unități și Recrutare
+Selectează o **Cazarmă** (clădirea maro) pentru a vedea meniul de recrutare în partea de jos a ecranului.
+* **Muncitor:** Unitate de bază. Poate construi clădiri.
+* **Spadasin:** Unitate de luptă corp-la-corp (Costă Aur + Mâncare).
+* **Arcaș:** Unitate de distanță (Costă Aur + Lemn).
+* **Cavaler:** Unitate rapidă și puternică.
+
+### 3. Construirea Clădirilor
+Pentru a construi, ai nevoie de un **Muncitor**.
+1.  Selectează un Muncitor (Click Stânga).
+2.  Din meniul de jos, alege clădirea dorită (ex: "Build Farm" sau "Build Tower").
+3.  O "fantomă" verde a clădirii va apărea sub cursor.
+4.  Dă Click Stânga pe o zonă liberă (Grass) pentru a construi.
+5.  Resursele vor fi consumate automat. Dacă nu ai resurse, construcția eșuează.
+
+### 4. Harta și Terenul
+Harta este o grilă de tile-uri generată aleatoriu.
+* **Grass (Iarbă):** Teren construibil și accesibil.
+* **Forest (Pădure):** Oferă bonusuri defensive (în logică), blochează anumite construcții.
+* **Water (Apă):** Zonă inaccesibilă pentru unitățile terestre.
+* **Mountain (Munte):** Zonă inaccesibilă.
+
+### 5. Salvare și Încărcare (Persistență)
+Jocul permite salvarea progresului într-un fișier text.
+* Apasă **F5** pentru a salva starea curentă (poziții, HP, resurse, tipul hărții).
+* Apasă **F6** pentru a relua jocul exact de unde l-ai lăsat, chiar și după redeschiderea aplicației.
+
+---
 
 ### Tema 0
 
