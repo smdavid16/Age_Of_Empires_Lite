@@ -121,7 +121,7 @@ void ActionPanel::setSelection(Cladire* cladire, Jucator& player, [[maybe_unused
                 player.consumaResursa("Aur", 40);
                 player.consumaResursa("Mancare", 30);
 
-                Pozitie spawnPos(cladire->getPozX() - 1, cladire->getPozY()); // Spawn on other side
+                Pozitie spawnPos(cladire->getPozX() - 1, cladire->getPozY());
                 player.adaugaUnitate(std::make_shared<Arcas>(spawnPos, player.getID()));
                 std::cout << "Arcas antrenat!\n";
             } catch (const std::exception& e) {
