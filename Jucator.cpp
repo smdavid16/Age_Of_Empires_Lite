@@ -4,6 +4,7 @@
 #include "Unitaticoncrete.h"
 #include "Turn.h"
 #include "Cazarma.h"
+#include "Ferma.h"
 
 Jucator::Jucator(const std::string& n, int id) : nume(n), playerID(id) {
     // Resursele de baza a fiecarui jucator
