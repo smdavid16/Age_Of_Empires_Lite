@@ -9,9 +9,9 @@
 const float SCROLL_SPEED = 600.0f;
 
 Game::Game()
-    : window(sf::VideoMode({1920, 1080}), "Age of Empires Lite"),
+    : currentTurn(1),
+      window(sf::VideoMode({1920, 1080}), "Age of Empires Lite"),
       hartaLogic(100, 150),
-      currentTurn(1),
       player("David", 1),
       enemy("calculator", 2),
       unitateSelectata(nullptr),
