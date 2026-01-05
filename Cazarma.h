@@ -8,23 +8,23 @@
 
 #include "Cladire.h"
 
+class CampDeLupta;
+
 class Cazarma : public Cladire {
-    bool antreneaza;
+private:
+    std::string lastReport;
+
+
 public:
-    Cazarma(const Pozitie& p, int id) : Cladire("Cazarma", p, 1000, id), antreneaza(false) {}
+    Cazarma(const Pozitie& p, int id);
 
-    Cladire* clone() const override { return new Cazarma(*this); }
+    [[nodiscard]] Cladire* clone() const override;
 
-    void actioneaza([[maybe_unused]] CampDeLupta& harta) override {
-        if(antreneaza) std::cout << "[Cazarma] Antrenament unitate in progres...\n";
-        else std::cout << "[Cazarma] In asteptare ordine.\n";
-    }
+    void actioneaza(CampDeLupta& harta) override;
+    std::string getLastReport();
 
 protected:
-    void doAfisare(std::ostream& os) const override {
-        Cladire::doAfisare(os);
-        os << " | [Militar] " << (antreneaza ? "Recruteaza" : "Idle");
-    }
+    void doAfisare(std::ostream& os) const override;
 };
 
 #endif //OOP_CAZARMA_H

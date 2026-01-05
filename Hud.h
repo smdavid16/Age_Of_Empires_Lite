@@ -14,12 +14,13 @@ private:
     sf::Font font;
     sf::Text resourceText;
     sf::Text eraText;
+    sf::Text turnText;
     sf::RectangleShape backgroundBar;
 
 public:
     Hud();
 
-    void update(const Jucator& player);
+    void update(const Jucator& player, int currenTurn);
 
     void draw(sf::RenderWindow& window);
 };

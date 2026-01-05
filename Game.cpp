@@ -14,29 +14,41 @@ Game::Game()
       player("David", 1),
       enemy("calculator", 2),
       unitateSelectata(nullptr),
+      currentTurn(1),
       cladireSelectata(nullptr)
 {
     window.setFramerateLimit(60);
     camera = window.getDefaultView();
 
     mapRenderer.loadTextures("tileset.png");
+    hartaLogic.generateRandomMap();
     mapRenderer.buildVertexArray(hartaLogic);
 
     // Adaug unitati, cladiri cu care incepe jocul
     auto ferma = std::make_shared<Ferma>(Pozitie(4, 4), 1);
     player.adaugaCladire(ferma);
-    player.adaugaCladire(std::make_shared<Turn>(Pozitie(10, 8), 1));
+    player.adaugaCladire(std::make_shared<Turn>(Pozitie(7, 6), 1));
     player.adaugaUnitate(std::make_shared<Muncitor>(Pozitie(5, 5), 1));
     player.adaugaUnitate(std::make_shared<Arcas>(Pozitie(6, 4), 1));
     player.adaugaCladire(std::make_shared<Cazarma>(Pozitie(8, 8), 1));
     player.adaugaUnitate(std::make_shared<Cavaler>(Pozitie(6, 6), 1));
     player.adaugaResursa("Mancare", 200);
     enemy.adaugaCladire(ferma);
-    enemy.adaugaCladire(std::make_shared<Turn>(Pozitie(20, 8), 1));
+    enemy.adaugaCladire(std::make_shared<Turn>(Pozitie(18, 6), 1));
     enemy.adaugaUnitate(std::make_shared<Muncitor>(Pozitie(21, 5), 1));
     enemy.adaugaCladire(std::make_shared<Cazarma>(Pozitie(23, 8), 1));
     enemy.adaugaUnitate(std::make_shared<Cavaler>(Pozitie(22, 6), 1));
     enemy.adaugaResursa("Mancare", 200);
+}
+
+Game::~Game() {
+    std::cout << "--------------------------------------\n";
+    std::cout << "[SYSTEM] Destructor joc apelat.\n";
+    std::cout << "[SYSTEM] Destructor jucator apelat pentru  (" << player.getID() << ")...\n";
+    std::cout << "[SYSTEM] Destructor jucator apelat pentru  (" << enemy.getID() << ")...\n";
+    std::cout << "[SYSTEM] Destructor harta si texturi\n";
+    std::cout << "[SYSTEM] Joc inchis.\n";
+    std::cout << "--------------------------------------\n";
 }
 
 void Game::run() {
@@ -47,6 +59,11 @@ void Game::run() {
         update(dt);
         render();
     }
+}
+
+void Game::closeGame() {
+    std::cout << "\n[SYSTEM] Inchid jocul.\n";
+    window.close();
 }
 
 Pozitie Game::getGridPositionFromMouse(sf::Vector2i pixelPos) {
@@ -181,8 +198,23 @@ void Game::processEvents() {
                 player.joacaTura(hartaLogic, enemy);
                 player.colecteazaProductia();
                 player.afiseazaStatus();
+                currentTurn++;
 
-                hud.update(player);
+                hud.update(player, currentTurn);
+                if (cladireSelectata) {
+                    actionPanel.setSelection(cladireSelectata.get(), player, nullptr);
+                }
+                else if (unitateSelectata) {
+                    actionPanel.setSelection(unitateSelectata.get(), player,
+                        [&](const std::string& type) {
+                            if (type == "Farm") currentState = GameState::PlacingFarm;
+                            if (type == "Tower") currentState = GameState::PlacingTower;
+                        }
+                    );
+                }
+                else {
+                    actionPanel.showGlobalPanel(player);
+                }
             }
             else if (keyPress->code == sf::Keyboard::Key::R) {
                 hartaLogic.generateRandomMap();
@@ -194,16 +226,56 @@ void Game::processEvents() {
                 unitateSelectata = nullptr;
                 cladireSelectata = nullptr;
             }
+            if (keyPress->code == sf::Keyboard::Key::F10) {
+                closeGame();
+            }
+            if (keyPress->code == sf::Keyboard::Key::F5) {
+                saveGame();
+            }
+            if (keyPress->code == sf::Keyboard::Key::F6) {
+                loadGame();
+            }
         }
     }
+    if (window.hasFocus()) {
+        sf::Vector2f movement(0.f, 0.f);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) movement.y -= 1.f;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) movement.y += 1.f;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) movement.x -= 1.f;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) movement.x += 1.f;
 
-    sf::Vector2f movement(0.f, 0.f);
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) movement.y -= 1.f;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) movement.y += 1.f;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) movement.x -= 1.f;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) movement.x += 1.f;
+        camera.move(movement * SCROLL_SPEED * 0.05f);
+    }
+    sf::Vector2f viewSize = camera.getSize();
+    sf::Vector2f viewCenter = camera.getCenter();
 
-    camera.move(movement * SCROLL_SPEED * 0.05f);
+
+    float mapWidthPixel = hartaLogic.getLatime() * TILE_SIZE;
+    float mapHeightPixel = hartaLogic.getInaltime() * TILE_SIZE;
+
+
+    float minX = viewSize.x / 2.0f;
+    float maxX = mapWidthPixel - minX;
+    float minY = viewSize.y / 2.0f;
+    float maxY = mapHeightPixel - minY;
+
+
+    if (maxX < minX) {
+        viewCenter.x = mapWidthPixel / 2.0f;
+    } else {
+        if (viewCenter.x < minX) viewCenter.x = minX;
+        if (viewCenter.x > maxX) viewCenter.x = maxX;
+    }
+
+    // Clamp Y
+    if (maxY < minY) {
+        viewCenter.y = mapHeightPixel / 2.0f;
+    } else {
+        if (viewCenter.y < minY) viewCenter.y = minY;
+        if (viewCenter.y > maxY) viewCenter.y = maxY;
+    }
+
+    camera.setCenter(viewCenter);
 }
 
 void Game::drawHealthBar(const sf::Vector2f& pos, int hp, int maxHp) {
@@ -329,11 +401,70 @@ void Game::render() {
 
     window.setView(window.getDefaultView());
 
-    hud.update(player);
+    hud.update(player, currentTurn);
 
     hud.draw(window);
 
     actionPanel.draw(window);
 
     window.display();
+}
+
+void Game::saveGame() {
+    std::ofstream file("savegame.txt");
+    if (!file.is_open()) {
+        std::cout << "[ERROR] Could not save game!\n";
+        return;
+    }
+
+    file << currentTurn << "\n";
+
+    // 2. Map
+    hartaLogic.saveMap(file);
+
+    // 3. Players
+    player.savePlayer(file);
+    enemy.savePlayer(file);
+
+    std::cout << "[SYSTEM] Game Saved Successfully!\n";
+    file.close();
+}
+
+void Game::loadGame() {
+    std::cout << "[LOAD] Starting Load Process...\n";
+
+    std::ifstream file("savegame.txt");
+    if (!file.is_open()) {
+        std::cout << "[ERROR] No save file found!\n";
+        return;
+    }
+
+    // 1. SAFEGUARD POINTERS
+    std::cout << "[LOAD] Clearing Selections...\n";
+    unitateSelectata = nullptr;
+    cladireSelectata = nullptr;
+    actionPanel.clearSelection();
+
+    // 2. GLOBAL DATA
+    std::cout << "[LOAD] Loading Turn Data...\n";
+    file >> currentTurn;
+
+    // 3. MAP
+    std::cout << "[LOAD] Loading Map...\n";
+    hartaLogic.loadMap(file);
+    mapRenderer.buildVertexArray(hartaLogic);
+
+    // 4. PLAYERS
+    std::cout << "[LOAD] Loading Player...\n";
+    player.loadPlayer(file);
+
+    std::cout << "[LOAD] Loading Enemy...\n";
+    enemy.loadPlayer(file);
+
+    // 5. HUD UPDATE
+    std::cout << "[LOAD] Updating HUD...\n";
+    hud.update(player, currentTurn);
+
+    std::cout << "[SYSTEM] Game Loaded Successfully!\n";
+    file.close();
 }

@@ -161,6 +161,54 @@ void CampDeLupta::generateRandomMap() {
     construiesteBaza(latime_placa - bazaSize - 1, inaltime_placa - bazaSize - 1, latime_placa - 1, inaltime_placa - 1, 3);
 }
 
+void CampDeLupta::saveMap(std::ofstream& file) const {
+    // 1. Save Dimensions
+    file << latime_placa << " " << inaltime_placa << "\n";
+
+    // 2. Save Tiles: Iterate Y (Rows) first, then X (Columns)
+    // This makes the text file visually match the screen (Row 0, then Row 1...)
+    for (int y = 0; y < inaltime_placa; ++y) {
+        for (int x = 0; x < latime_placa; ++x) {
+            // Access logic: tiles[x][y] because your storage is Width-Major
+            file << static_cast<int>(tiles[x][y].getType()) << " ";
+        }
+        file << "\n"; // New line at the end of every row
+    }
+}
+
+void CampDeLupta::loadMap(std::ifstream& file) {
+    int w, h;
+    file >> w >> h;
+
+    // Safety: If dimensions changed, resizing is critical
+    if (w != latime_placa || h != inaltime_placa) {
+        latime_placa = w;
+        inaltime_placa = h;
+
+        // Resize storage to [Width][Height] pattern
+        tiles.clear();
+        tiles.resize(latime_placa);
+        for (int x = 0; x < latime_placa; ++x) {
+            tiles[x].resize(inaltime_placa);
+        }
+    }
+
+    // Load Tiles: Iterate Y first, then X (Matching the Save function)
+    for (int y = 0; y < inaltime_placa; ++y) {
+        for (int x = 0; x < latime_placa; ++x) {
+            int typeInt;
+            file >> typeInt;
+
+            // Access logic: tiles[x][y]
+            tiles[x][y].setType(static_cast<TileType>(typeInt));
+
+            // Optional: If you store coordinates inside the tile, update them
+            // tiles[x][y].setX(x);
+            // tiles[x][y].setY(y);
+        }
+    }
+}
+
 
 std::ostream& operator<<(std::ostream& os, const CampDeLupta& c) {
     os << "CampDeLupta: " << c.latime_placa << "x" << c.inaltime_placa << " tiles.";

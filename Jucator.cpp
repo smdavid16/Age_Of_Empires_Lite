@@ -1,13 +1,16 @@
 #include "Jucator.h"
 #include "CampDeLupta.h"
 #include "Exceptions.h"
-
+#include "Unitaticoncrete.h"
+#include "Turn.h"
+#include "Cazarma.h"
 
 Jucator::Jucator(const std::string& n, int id) : nume(n), playerID(id) {
     // Resursele de baza a fiecarui jucator
     adaugaResursa("Aur", 100);
     adaugaResursa("Lemn", 100);
     adaugaResursa("Mancare", 100);
+    adaugaResursa("Piatra", 100);
 }
 
 std::vector<Resursa> Jucator::getCostAvansare() const {
@@ -206,6 +209,87 @@ void Jucator::afiseazaStatus() const {
 std::ostream& operator<<(std::ostream& os, const Jucator& j) {
     j.afiseazaStatus();
     return os;
+}
+
+void Jucator::savePlayer(std::ofstream& file) const {
+    // 1. Save Resources
+    file << getCantitateResursa("Aur") << " "
+         << getCantitateResursa("Lemn") << " "
+         << getCantitateResursa("Mancare") << " "
+         << getCantitateResursa("Piatra") << "\n";
+
+    // 2. Save Units count
+    file << unitati.size() << "\n";
+    for (const auto& u : unitati) {
+        // Format: Name X Y HP OwnerID
+        file << u->getNume() << " " << u->getPozX() << " " << u->getPozY()
+             << " " << u->getHp() << " " << u->getOwnerID() << "\n";
+    }
+
+    // 3. Save Buildings count
+    file << cladiri.size() << "\n";
+    for (const auto& c : cladiri) {
+        // Format: Name X Y HP OwnerID
+        file << c->getNume() << " " << c->getPozX() << " " << c->getPozY()
+             << " " << c->getHPCurent() << " " << playerID << "\n";
+    }
+}
+
+void Jucator::loadPlayer(std::ifstream& file) {
+    reset(); // Clear old data
+
+    // 1. Load Resources
+    int g, w, f, s;
+    file >> g >> w >> f >> s;
+    adaugaResursa("Aur", g);
+    adaugaResursa("Lemn", w);
+    adaugaResursa("Mancare", f);
+    adaugaResursa("Piatra", s);
+
+    // 2. Load Units
+    int numUnits;
+    file >> numUnits;
+    for (int i = 0; i < numUnits; ++i) {
+        std::string name;
+        int x, y, hp, owner;
+        file >> name >> x >> y >> hp >> owner;
+
+        std::shared_ptr<Unitate> u = nullptr;
+
+        // Factory Logic
+        if (name == "Muncitor") u = std::make_shared<Muncitor>(Pozitie(x, y), owner);
+        else if (name == "Arcas") u = std::make_shared<Arcas>(Pozitie(x, y), owner);
+        else if (name == "Spadasin") u = std::make_shared<Spadasin>(Pozitie(x, y), owner);
+        else if (name == "Cavaler") u = std::make_shared<Cavaler>(Pozitie(x, y), owner);
+
+        if (u) {
+            // HP hack: damage the unit until HP matches saved HP
+            int damageToTake = u->getHpMax() - hp;
+            if(damageToTake > 0) u->primesteDaune(damageToTake);
+            unitati.push_back(u);
+        }
+    }
+
+    // 3. Load Buildings
+    int numBuildings;
+    file >> numBuildings;
+    for (int i = 0; i < numBuildings; ++i) {
+        std::string name;
+        int x, y, hp, owner;
+        file >> name >> x >> y >> hp >> owner;
+
+        std::shared_ptr<Cladire> c = nullptr;
+
+        if (name == "Ferma") c = std::make_shared<Ferma>(Pozitie(x, y), owner);
+        else if (name == "Turn") c = std::make_shared<Turn>(Pozitie(x, y), owner);
+        else if (name == "Cazarma") c = std::make_shared<Cazarma>(Pozitie(x, y), owner);
+
+        if (c) {
+            int damageToTake = c->getHPMaxim() - hp;
+            if(damageToTake > 0) c->primesteDaune(damageToTake);
+            cladiri.push_back(c);
+        }
+    }
 }
 
 std::string Jucator::getNumeEra() const {

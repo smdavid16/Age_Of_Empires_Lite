@@ -52,6 +52,7 @@ public:
     [[nodiscard]] const std::string& getNume() const { return nume; }
     [[nodiscard]] int getHp() const { return hp; }
     [[nodiscard]] int getHpMax() const { return hpMax; }
+    [[nodiscard]] int getOwnerID() const { return ownerID; }
 
     void afiseazaInfo(std::ostream& os) const;
     friend std::ostream& operator<<(std::ostream& os, const Unitate& u);

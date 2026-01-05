@@ -5,6 +5,7 @@
 #include <iostream>
 #include <cmath>
 #include <stdexcept>
+#include <fstream>
 #include "Pozitie.h"
 #include "Tile.h"
 
@@ -28,10 +29,8 @@ public:
     [[nodiscard]] Tile& getTile(const Pozitie& pos);
 
     [[nodiscard]] const Tile& getTile(const Pozitie& pos) const;
-
-
-
-
+    void saveMap(std::ofstream& file) const;
+    void loadMap(std::ifstream& file);
     friend std::ostream& operator<<(std::ostream& os, const CampDeLupta& c);
 };
 

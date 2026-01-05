@@ -26,7 +26,6 @@ private:
     Era eraCurenta;
 
 public:
-    // Constructor
     Jucator(const std::string& n, int id);
 
     void avansareEra();
@@ -54,6 +53,13 @@ public:
     int getCantitateResursa(const std::string& nume) const;
     void afiseazaStatus() const;
     [[nodiscard]] std::string getNumeEra() const;
+    void savePlayer(std::ofstream& file) const;
+    void loadPlayer(std::ifstream& file);
+    void reset() {
+        unitati.clear();
+        cladiri.clear();
+        inventar.clear();
+    }
 
     friend std::ostream& operator<<(std::ostream& os, const Jucator& j);
 };

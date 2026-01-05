@@ -5,6 +5,7 @@ Hud::Hud() :
     font(),
     resourceText(font),
     eraText(font),
+    turnText(font),
     backgroundBar({1280.f, 50.f})
 {
     // Incarc font
@@ -17,6 +18,13 @@ Hud::Hud() :
     resourceText.setFillColor(sf::Color::White);
     resourceText.setPosition({10.f, 10.f});
 
+    //Scrisul pentru tura
+    turnText.setFont(font);
+    turnText.setCharacterSize(20);
+    turnText.setFillColor(sf::Color::Cyan);
+    turnText.setStyle(sf::Text::Bold);
+    turnText.setPosition({950.f, 8.f});
+
     // Configurez scrisul pentru era
     eraText.setCharacterSize(24);
     eraText.setFillColor(sf::Color::Yellow);
@@ -28,12 +36,13 @@ Hud::Hud() :
     backgroundBar.setPosition({0.f, 0.f});
 }
 
-void Hud::update(const Jucator& player) {
+void Hud::update(const Jucator& player, int currentTurn) {
     std::stringstream ss;
 
     ss << "Mancare: " << player.getCantitateResursa("Mancare") << "  |  ";
     ss << "Lemn: "    << player.getCantitateResursa("Lemn")    << "  |  ";
-    ss << "Aur: "     << player.getCantitateResursa("Aur");
+    ss << "Aur: "     << player.getCantitateResursa("Aur")<< "  |  ";
+    ss << "Piatra: "     << player.getCantitateResursa("Piatra");
 
     resourceText.setString(ss.str());
 
@@ -41,10 +50,13 @@ void Hud::update(const Jucator& player) {
     
     float textWidth = eraText.getLocalBounds().size.x;
     eraText.setPosition({1280.f - textWidth - 20.f, 10.f});
+
+    turnText.setString("Turn: " + std::to_string(currentTurn));
 }
 
 void Hud::draw(sf::RenderWindow& window) {
     window.draw(backgroundBar);
     window.draw(resourceText);
     window.draw(eraText);
+    window.draw(turnText);
 }

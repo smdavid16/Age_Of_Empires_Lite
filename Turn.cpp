@@ -3,7 +3,7 @@
 #include <iostream>
 
 Turn::Turn(const Pozitie& p, int id) 
-    : Cladire("Turn de Veghe", p, 500, id), damage(25), range(5) {}
+    : Cladire("Turn", p, 500, id), damage(25), range(5) {}
 
 
 Cladire* Turn::clone() const {

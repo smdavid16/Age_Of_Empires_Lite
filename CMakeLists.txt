@@ -90,7 +90,7 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         Hud.h
         ActionPanel.cpp
         ActionPanel.h
-        Spadasin.h
+        Unitaticoncrete.cpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
@@ -125,21 +125,7 @@ endif()
 
 copy_files(FILES tastatura.txt COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
 # copy_files(FILES tastatura.txt config.json DIRECTORY images sounds COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
-# copy_files(DIRECTORY images sounds COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
+copy_files(DIRECTORY fonts texturi COPY_TO_DESTINATION TARGET_NAME ${MAIN_EXECUTABLE_NAME})
 
 set(ASSETS_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/texturi")
 set(ASSETS_DEST_DIR "${CMAKE_CURRENT_BINARY_DIR}/texturi")
-
-add_custom_command(TARGET oop POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_SOURCE_DIR}/texturi
-        $<TARGET_FILE_DIR:oop>/texturi
-        COMMENT "Copiez texturi in build"
-)
-
-add_custom_command(TARGET oop POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_SOURCE_DIR}/fonts
-        $<TARGET_FILE_DIR:oop>/fonts
-        COMMENT "Copiez fonts in build"
-)

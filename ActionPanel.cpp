@@ -8,7 +8,6 @@
 #include "Ferma.h"
 #include "Turn.h"
 #include "Cazarma.h"
-#include "Spadasin.h"
 
 ActionPanel::ActionPanel() {
     if (!font.openFromFile("fonts/opensans.ttf")) {
@@ -111,7 +110,10 @@ void ActionPanel::setSelection(Cladire* cladire, Jucator& player, [[maybe_unused
             }
         });
     }
-    else if (dynamic_cast<Cazarma*>(cladire)) {
+    else if (auto* cazarma = dynamic_cast<Cazarma*>(cladire)) {
+        std::string analysis = cazarma->getLastReport();
+
+        addButton("STATUS:\n" + analysis, 0, 0, 0, [](){});
         //Arcas: 40 aur, lemn 30, mancare 30
         addButton("Train Arcas", 40, 30, 30, [&player, cladire]() {
             try {

@@ -8,11 +8,9 @@ enum class TileType {
     Forest,
     Water,
     Mountain,
-
     // Resurse
     StoneDeposit,
     GoldDeposit,
-
     //Tile pentru baza jucatorilor
     GardOrizontal,
     GardVertical,
@@ -22,21 +20,16 @@ enum class TileType {
 
 class Tile {
 private:
-
     TileType type;
-
     bool isWalkable;
     int movementCost;
-
     int resourceAmount;
-
-
 public:
     explicit Tile(TileType t = TileType::Grass);
-
-    // Getters
     [[nodiscard]] TileType getType() const { return type; }
-
+    void setType(TileType t) {
+        type = t;
+    }
 };
 
 #endif // OOP_TILE_H

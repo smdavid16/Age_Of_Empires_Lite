@@ -20,6 +20,7 @@ enum class GameState {
 
 class Game {
 private:
+    int currentTurn;
     sf::RenderWindow window;
     sf::View camera;
     MapRenderer mapRenderer;
@@ -43,6 +44,10 @@ private:
 public:
     Game();
     void run();
+    void closeGame();
+    ~Game();
+    void saveGame();
+    void loadGame();
 };
 
 #endif //OOP_GAME_H

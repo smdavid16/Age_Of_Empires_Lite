@@ -2,104 +2,64 @@
 #define OOP_UNITATICONCRETE_H
 
 #include "Unitate.h"
-#include "CampDeLupta.h"
 #include <iostream>
+#include <vector>
+#include <memory>
+
+class CampDeLupta;
+class Jucator;
+
 
 class Muncitor : public Unitate {
     int capacitateColectare;
     std::string resursaCurenta;
 
 public:
-    //--- 1. MUNCITOR ---
-    // specializat in a colecta resurse, munceste pe camp practic, daca e nevoie sa atace, da cu o bata de polistiren in inamic
-    Muncitor(const Pozitie& p, int id)
-        : Unitate("Muncitor", p, 50, 1, 0, id), capacitateColectare(10), resursaCurenta("Nimic") {}
+    Muncitor(const Pozitie& p, int id);
 
-    Unitate* clone() const override { return new Muncitor(*this); }
+    [[nodiscard]] Unitate* clone() const override;
 
-    void actioneaza(CampDeLupta& harta, Jucator& player, [[maybe_unused]] std::vector<std::shared_ptr<Unitate>>& inamici) override {
-        TileType type = harta.getTile(Pozitie(getPozX(), getPozY())).getType();
-
-        if (type == TileType::Forest) {
-            resursaCurenta = "Lemn";
-            player.adaugaResursa("Lemn", capacitateColectare);
-            std::cout << "Muncitorul taie copaci. (+ " << capacitateColectare << " Lemn)\n";
-        } else if (type == TileType::GoldDeposit) {
-            resursaCurenta = "Aur";
-            player.adaugaResursa("Aur", capacitateColectare);
-            std::cout << "Muncitorul mineaza. (+ " << capacitateColectare << " Aur)\n";
-        } else {
-            resursaCurenta = "Nimic";
-            std::cout << "Muncitorul sta (Teren fara resurse).\n";
-        }
-    }
+    void actioneaza(CampDeLupta& harta, Jucator& player, std::vector<std::shared_ptr<Unitate>>& inamici) override;
 
 protected:
-    void doAfisare(std::ostream& os) const override {
-        Unitate::doAfisare(os);
-        os << " | Sac: " << resursaCurenta;
-    }
+    void doAfisare(std::ostream& os) const override;
 };
 
-// --- 2. ARCAS ---
-// un fel de sniper practic, ataca la distanta, dar nu are armura, trage in cercul de raza range
+
 class Arcas : public Unitate {
     int range;
 public:
-    Arcas(const Pozitie& p, int id)
-        : Unitate("Arcas", p, 35, 10, 0, id), range(4) {}
+    Arcas(const Pozitie& p, int id);
 
-    Unitate* clone() const override { return new Arcas(*this); }
+    [[nodiscard]] Unitate* clone() const override;
 
-    void actioneaza([[maybe_unused]] CampDeLupta& harta, [[maybe_unused]] Jucator& player, [[maybe_unused]] std::vector<std::shared_ptr<Unitate>>& inamici) override {
-        for (auto& inamic : inamici) {
-            if (!inamic->esteVie()) continue;
-
-            double dist = distantaCatre(*inamic);
-
-            if (dist <= range) {
-                std::cout << " -> Tinta reperata: " << inamic->getNume() << " la distanta " << dist << "!\n";
-                std::cout << " -> Arcasul trage!\n";
-
-                inamic->primesteDaune(this->damage);
-                return;
-            }
-        }
-    }
+    void actioneaza(CampDeLupta& harta, Jucator& player, std::vector<std::shared_ptr<Unitate>>& inamici) override;
 
 protected:
-    void doAfisare(std::ostream& os) const override {
-        Unitate::doAfisare(os);
-        os << " | Tip: Range (" << range << ")";
-    }
+    void doAfisare(std::ostream& os) const override;
 };
 
-// --- 3. CAVALER ---
-// infanterie, damage mare, armura mare
+
 class Cavaler : public Unitate {
 public:
-    Cavaler(const Pozitie& p, int id) : Unitate("Cavaler", p, 120, 25, 3, id) {}
+    Cavaler(const Pozitie& p, int id);
 
-    Unitate* clone() const override { return new Cavaler(*this); }
+    [[nodiscard]] Unitate* clone() const override;
 
-    void actioneaza([[maybe_unused]] CampDeLupta& harta, [[maybe_unused]] Jucator& player, std::vector<std::shared_ptr<Unitate>>& inamici) override {
-        bool hit = false;
-        for (auto& inamic : inamici) {
-            if (inamic->esteVie() && distantaCatre(*inamic) <= 1.5) {
-                std::cout << " -> CAVALERUL ATACA " << inamic->getNume() << "!\n";
-                inamic->primesteDaune(this->damage);
-                hit = true;
-                break;
-            }
-        }
-        if (!hit) std::cout << "Cavaler: Patruleaza.\n";
-    }
+    void actioneaza(CampDeLupta& harta, Jucator& player, std::vector<std::shared_ptr<Unitate>>& inamici) override;
 
 protected:
-    void doAfisare(std::ostream& os) const override {
-        Unitate::doAfisare(os);
-        os << " | Tip: Cavaler";
-    }
+    void doAfisare(std::ostream& os) const override;
 };
+
+class Spadasin : public Unitate {
+public:
+    Spadasin(const Pozitie& p, int id);
+
+    [[nodiscard]] Unitate* clone() const override;
+
+    void actioneaza(CampDeLupta& harta, Jucator& player, std::vector<std::shared_ptr<Unitate>>& inamici) override;
+};
+
 
 #endif //OOP_UNITATICONCRETE_H
