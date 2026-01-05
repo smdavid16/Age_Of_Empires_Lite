@@ -21,10 +21,8 @@ public:
     [[nodiscard]] Cladire* clone() const override;
 
     void actioneaza(CampDeLupta& harta) override;
-    std::string getLastReport();
+    [[nodiscard]]const std::string& getLastReport() const;
 
-protected:
-    void doAfisare(std::ostream& os) const override;
 };
 
 #endif //OOP_CAZARMA_H

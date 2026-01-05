@@ -4,23 +4,18 @@
 #include <sstream>
 
 Cazarma::Cazarma(const Pozitie& p, int id) 
-    : Cladire("Cazarma", p, 1000, id)
-{
-}
+    : Cladire("Cazarma", p, 1000, id) {}
 
 Cladire* Cazarma::clone() const {
     return new Cazarma(*this);
 }
 
-std::string Cazarma::getLastReport() {
+const std::string& Cazarma::getLastReport() const {
     return lastReport;
 }
 
-
 void Cazarma::actioneaza(CampDeLupta& harta) {
 
-
-    // 2. Tactical Logic & DEBUGGING
     int strategicScore = 0;
     bool nearForest = false;
     bool nearMountain = false;
@@ -60,8 +55,4 @@ void Cazarma::actioneaza(CampDeLupta& harta) {
     lastReport = ss.str();
 
     std::cout << "[Cazarma] Report Generat: " << lastReport << "\n";
-}
-
-void Cazarma::doAfisare(std::ostream& os) const {
-    Cladire::doAfisare(os);
 }
