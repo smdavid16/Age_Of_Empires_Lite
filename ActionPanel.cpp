@@ -110,7 +110,7 @@ void ActionPanel::setSelection(Cladire* cladire, Jucator& player, [[maybe_unused
             }
         });
     }
-    else if (auto* cazarma = dynamic_cast<Cazarma*>(cladire)) {
+    else if (const auto* cazarma = dynamic_cast<Cazarma*>(cladire)) {
         std::string analysis = cazarma->getLastReport();
 
         addButton("STATUS:\n" + analysis, 0, 0, 0, [](){});
