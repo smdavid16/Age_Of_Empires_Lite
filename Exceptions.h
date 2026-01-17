@@ -55,16 +55,30 @@ public:
 // 1. Exceptie pentru valori negative (ex: adauga -50 Aur)
 class ValoareNegativaException : public JocException {
 public:
-    ValoareNegativaException(const std::string& context)
+    explicit ValoareNegativaException(const std::string& context)
         : JocException("EROARE LOGICA (" + context + "): Valoarea nu poate fi negativa!") {}
 };
 
 // 2. Exceptie pentru lipsa resurselor (Gameplay)
 class ResurseInsuficienteException : public JocException {
 public:
-    ResurseInsuficienteException(const std::string& resursa, int necesar, int disponibil)
+    explicit ResurseInsuficienteException(const std::string& resursa, int necesar, int disponibil)
         : JocException("Resurse insuficiente: Ai nevoie de " + std::to_string(necesar) +
                        " " + resursa + ", dar ai doar " + std::to_string(disponibil)) {}
+};
+// 3. Exceptie pentru coordonate in afara hartii (ex: x = -1 sau x = 1000)
+class CoordonateInvalideException : public JocException {
+public:
+    CoordonateInvalideException(int x, int y, int maxW, int maxH)
+        : JocException("Coordonate Invalide [" + std::to_string(x) + "," + std::to_string(y) +
+                       "]. Limite: 0-" + std::to_string(maxW) + ", 0-" + std::to_string(maxH)) {}
+};
+
+// 4. Exceptie pentru Save/Load
+class FisierException : public JocException {
+public:
+    explicit FisierException(const std::string& filename, const std::string& detalii)
+        : JocException("Eroare Fisier [" + filename + "]: " + detalii) {}
 };
 
 #endif //OOP_EXCEPTIONS_H

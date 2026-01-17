@@ -9,6 +9,7 @@
 #include "Piata.h"
 #include "EntityFactory.h"
 #include "MathUtils.h"
+#include "Exceptions.h"
 
 const float SCROLL_SPEED = 600.0f;
 
@@ -442,48 +443,84 @@ void Game::render() {
 }
 
 void Game::saveGame() {
-    std::ofstream file("savegame.txt");
-    if (!file.is_open()) {
-        std::cout << "[EROARE] Nu am putut salva jocul!\n";
-        return;
-    }
-    file << currentTurn << "\n";
-    hartaLogic.saveMap(file);
-    player.savePlayer(file);
-    enemy.savePlayer(file);
+    try {
+        std::ofstream file("savegame.txt");
 
-    std::cout << "[SYSTEM] Joc Salvat!\n";
-    file.close();
+        // Verificare explicita
+        if (!file.is_open()) {
+            throw FisierException("savegame.txt", "Nu am drepturi de scriere sau disk full.");
+        }
+
+        if (!file.good()) {
+            throw FisierException("savegame.txt", "Stream-ul este intr-o stare proasta inainte de scriere.");
+        }
+
+        file << currentTurn << "\n";
+        hartaLogic.saveMap(file);
+        player.savePlayer(file);
+        enemy.savePlayer(file);
+
+        if (file.fail()) {
+            throw FisierException("savegame.txt", "Eroare in timpul scrierii datelor.");
+        }
+
+        std::cout << "[SYSTEM] Joc Salvat cu Succes!\n";
+        file.close();
+
+    } catch (const FisierException& e) {
+        std::cerr << "[CRITIC SAVE] " << e.what() << "\n";
+    } catch (const std::exception& e) {
+        std::cerr << "[EROARE SAVE] " << e.what() << "\n";
+    }
 }
 
 void Game::loadGame() {
-    std::cout << "[LOAD] Incarc savegame.txt...\n";
-    std::ifstream file("savegame.txt");
-    if (!file.is_open()) {
-        std::cout << "[ERROR] Fisierul nu exista!\n";
-        return;
+    std::cout << "[LOAD] Incep sa incarc save-ul...\n";
+
+    try {
+        std::ifstream file("savegame.txt");
+
+        if (!file.is_open()) {
+            throw FisierException("savegame.txt", "Fisierul nu exista. Salveaza mai intai!");
+        }
+
+        // Verificam daca fisierul e gol
+        if (file.peek() == std::ifstream::traits_type::eof()) {
+            throw FisierException("savegame.txt", "Fisierul este gol/corupt.");
+        }
+
+        // ... Logica de resetare existenta ...
+        unitateSelectata = nullptr;
+        cladireSelectata = nullptr;
+        actionPanel.clearSelection();
+
+        file >> currentTurn;
+
+        // Daca citirea a esuat (format gresit in fisier)
+        if (file.fail()) {
+            throw FisierException("savegame.txt", "Format date invalid (turn number).");
+        }
+
+        hartaLogic.loadMap(file);
+        mapRenderer.buildVertexArray(hartaLogic);
+
+        player.loadPlayer(file);
+        enemy.loadPlayer(file);
+
+        hud.onResurseSchimbate(
+            player.getCantitateResursa("Aur"),
+            player.getCantitateResursa("Lemn"),
+            player.getCantitateResursa("Mancare"),
+            player.getCantitateResursa("Piatra")
+        );
+        hud.update(player, currentTurn);
+
+        std::cout << "[LOAD] Save incarcat cu succes!\n";
+        file.close();
+
+    } catch (const FisierException& e) {
+        std::cerr << "[CRITIC LOAD] " << e.what() << "\n";
+    } catch (const std::exception& e) {
+        std::cerr << "[EROARE LOAD] " << e.what() << "\n";
     }
-
-    unitateSelectata = nullptr;
-    cladireSelectata = nullptr;
-    currentState = GameState::Normal;
-    actionPanel.clearSelection();
-
-    file >> currentTurn;
-    hartaLogic.loadMap(file);
-    mapRenderer.buildVertexArray(hartaLogic);
-
-    player.loadPlayer(file);
-    enemy.loadPlayer(file);
-
-    hud.onResurseSchimbate(
-        player.getCantitateResursa("Aur"),
-        player.getCantitateResursa("Lemn"),
-        player.getCantitateResursa("Mancare"),
-        player.getCantitateResursa("Piatra")
-    );
-    hud.update(player, currentTurn);
-
-    std::cout << "[LOAD] Incarcat cu succes!\n";
-    file.close();
 }

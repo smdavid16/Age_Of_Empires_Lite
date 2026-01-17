@@ -6,8 +6,16 @@ class Pozitie {
 private:
     int x, y;
 
+    static const int MAX_X = 100;
+    static const int MAX_Y = 100;
+
+    // Functie privata de validare
+    void valideaza(int newX, int newY) const;
+
 public:
-    explicit Pozitie(int x = 0, int y = 0) : x(x), y(y) {}
+
+    Pozitie();
+    Pozitie(int x, int y);
     Pozitie(const Pozitie& other) {
         x = other.x;
         y = other.y;
@@ -16,6 +24,9 @@ public:
     void muta(int dx, int dy) { x += dx; y += dy; }
     [[nodiscard]]int getX() const { return x; }
     [[nodiscard]]int getY() const { return y; }
+
+    bool operator==(const Pozitie& other) const;
+    bool operator!=(const Pozitie& other) const;
 
     friend std::ostream& operator<<(std::ostream& os, const Pozitie& p);
     Pozitie& operator=(const Pozitie& other){
@@ -26,6 +37,9 @@ public:
         y = other.y;
         return *this;
     }
+
+    void setX(int x);
+    void setY(int y);
 };
 
 
