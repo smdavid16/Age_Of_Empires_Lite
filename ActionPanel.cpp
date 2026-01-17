@@ -11,7 +11,7 @@
 
 ActionPanel::ActionPanel() {
     if (!font.openFromFile("fonts/opensans.ttf")) {
-        std::cerr << "Nu pot deschide font" << '\n';
+        std::cerr << "Nu pot deschide fontul" << '\n';
     }
 
     // Pozitia panoului
