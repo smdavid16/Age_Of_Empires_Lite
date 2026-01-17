@@ -7,7 +7,7 @@ private:
     int x, y;
 
     static const int MAX_X = 100;
-    static const int MAX_Y = 100;
+    static const int MAX_Y = 150;
 
     // Functie privata de validare
     void valideaza(int newX, int newY) const;
