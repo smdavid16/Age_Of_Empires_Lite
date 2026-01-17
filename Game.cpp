@@ -325,7 +325,8 @@ void Game::drawHealthBar(const sf::Vector2f& pos, int hp, int maxHp) {
     const float yOffset = -10.0f;
 
     float ratio = (float)hp / (float)maxHp;
-    if (ratio < 0) ratio = 0; if (ratio > 1) ratio = 1;
+    if (ratio < 0) ratio = 0;
+    if (ratio > 1) ratio = 1;
 
     sf::RectangleShape bgRect({barWidth, barHeight});
     bgRect.setPosition({pos.x + (TILE_SIZE - barWidth) / 2.0f, pos.y + yOffset});

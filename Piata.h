@@ -16,7 +16,7 @@ public:
         return new Piata(*this);
     }
 
-    void actioneaza(CampDeLupta& harta) override {
+    void actioneaza([[maybe_unused]] CampDeLupta& harta) override {
         // Pasiv
     }
 
