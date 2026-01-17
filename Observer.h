@@ -19,10 +19,6 @@ public:
         observatori.push_back(obs);
     }
 
-    void eliminaObserver(IObserver* obs) {
-        observatori.erase(std::remove(observatori.begin(), observatori.end(), obs), observatori.end());
-    }
-
 protected:
     void notificaResurse(int aur, int lemn, int mancare, int piatra) {
         for (auto* obs : observatori) {

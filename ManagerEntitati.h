@@ -38,9 +38,6 @@ public:
         entitati.clear();
     }
 
-    bool esteGol() const {
-        return entitati.empty();
-    }
 };
 
 #endif // MANAGERENTITATI_H

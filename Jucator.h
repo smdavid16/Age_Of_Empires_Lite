@@ -45,11 +45,6 @@ public:
         return managerCladiri.getToate();
     }
 
-
-    const std::vector<std::shared_ptr<Unitate>>& getUnitatiInamic() const {
-        return managerUnitati.getToate();
-    }
-
     void adaugaCladire(std::shared_ptr<Cladire> c);
     void adaugaUnitate(std::shared_ptr<Unitate> u);
 
