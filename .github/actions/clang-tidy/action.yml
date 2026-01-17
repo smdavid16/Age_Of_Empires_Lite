@@ -14,9 +14,7 @@ runs:
         echo "CC=clang-${CLANG_VER}" >> $GITHUB_ENV
         echo "CXX=clang++-${CLANG_VER}" >> $GITHUB_ENV
 
-    # Also see https://github.com/actions/runner-images/discussions/9446#discussioncomment-8668538
     - name: Install Clang ${{ env.CLANG_VER }}
-      # renovate: datasource=github-tags depName=nick-fields/retry versioning=loose
       uses: nick-fields/retry@v3.0.2
       with:
         shell: bash
@@ -42,8 +40,6 @@ runs:
     - name: Clang-Tidy
       continue-on-error: true
       shell: bash
-      # clang-tidy is not able to follow symbolic links: https://bugs.llvm.org/show_bug.cgi?id=47460
-      # need to use | as sed separator because / is used in paths
       run: |
         sed -i "s|$(which ${CXX})|$(realpath $(which ${CXX}))|g" "${BUILD_DIR}"/compile_commands.json
 
