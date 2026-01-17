@@ -47,4 +47,24 @@ public:
 };
 
 
+class JocException : public std::runtime_error {
+public:
+    explicit JocException(const std::string& message) : std::runtime_error(message) {}
+};
+
+// 1. Exceptie pentru valori negative (ex: adauga -50 Aur)
+class ValoareNegativaException : public JocException {
+public:
+    ValoareNegativaException(const std::string& context)
+        : JocException("EROARE LOGICA (" + context + "): Valoarea nu poate fi negativa!") {}
+};
+
+// 2. Exceptie pentru lipsa resurselor (Gameplay)
+class ResurseInsuficienteException : public JocException {
+public:
+    ResurseInsuficienteException(const std::string& resursa, int necesar, int disponibil)
+        : JocException("Resurse insuficiente: Ai nevoie de " + std::to_string(necesar) +
+                       " " + resursa + ", dar ai doar " + std::to_string(disponibil)) {}
+};
+
 #endif //OOP_EXCEPTIONS_H
