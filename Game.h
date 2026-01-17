@@ -15,7 +15,8 @@
 enum class GameState {
     Normal,
     PlacingFarm,
-    PlacingTower
+    PlacingTower,
+    PlacingMarket
 };
 
 class Game {

@@ -37,6 +37,7 @@ void Unitate::afiseazaInfo(std::ostream& os) const {
 
 void Unitate::buffStats(int plus) {
     hpMax+=plus;
+    hp += plus;
 }
 
 

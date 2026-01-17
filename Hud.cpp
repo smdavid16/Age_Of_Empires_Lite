@@ -1,62 +1,73 @@
 #include "Hud.h"
 #include <iostream>
+#include <string>
 
-Hud::Hud() :
-    font(),
-    resourceText(font),
-    eraText(font),
-    turnText(font),
-    backgroundBar({1280.f, 50.f})
+Hud::Hud()
+    : font(),
+      txtAur(font),
+      txtLemn(font),
+      txtMancare(font),
+      txtPiatra(font),
+      txtEra(font),
+      txtTurn(font)
 {
-    // Incarc font
+
     if (!font.openFromFile("fonts/opensans.ttf")) {
-        std::cerr << "[HUD] Nu am putut deschide fontul\n";
+        std::cerr << "[HUD] EROARE: Nu am putut incarca fontul!\n";
     }
 
-    // Configurez scrisul pentru resurse
-    resourceText.setCharacterSize(20);
-    resourceText.setFillColor(sf::Color::White);
-    resourceText.setPosition({10.f, 10.f});
+    initText(txtAur,     20.f,  10.f, sf::Color::Yellow);
+    initText(txtLemn,    220.f, 10.f, sf::Color(205, 133, 63));
+    initText(txtMancare, 420.f, 10.f, sf::Color(255, 99, 71));
+    initText(txtPiatra,  620.f, 10.f, sf::Color(190, 190, 190));
 
-    //Scrisul pentru tura
-    turnText.setFont(font);
-    turnText.setCharacterSize(20);
-    turnText.setFillColor(sf::Color::Cyan);
-    turnText.setStyle(sf::Text::Bold);
-    turnText.setPosition({950.f, 8.f});
+    initText(txtEra,     1600.f, 10.f, sf::Color::Cyan);
+    initText(txtTurn,    1600.f, 40.f, sf::Color::White);
 
-    // Configurez scrisul pentru era
-    eraText.setCharacterSize(24);
-    eraText.setFillColor(sf::Color::Yellow);
-    eraText.setStyle(sf::Text::Style::Bold);
-    eraText.setPosition({1000.f, 10.f});
-
-    // Configurez fundal
-    backgroundBar.setFillColor(sf::Color(0, 0, 0, 150));
-    backgroundBar.setPosition({0.f, 0.f});
+    txtAur.setString("Aur: 100");
+    txtLemn.setString("Lemn: 100");
+    txtMancare.setString("Mancare: 100");
+    txtPiatra.setString("Piatra: 100");
+    txtEra.setString("Era: Dark Age");
+    txtTurn.setString("Tura: 1");
 }
 
-void Hud::update(const Jucator& player, int currentTurn) {
-    std::stringstream ss;
+void Hud::initText(sf::Text& text, float x, float y, sf::Color color) {
 
-    ss << "Mancare: " << player.getCantitateResursa("Mancare") << "  |  ";
-    ss << "Lemn: "    << player.getCantitateResursa("Lemn")    << "  |  ";
-    ss << "Aur: "     << player.getCantitateResursa("Aur")<< "  |  ";
-    ss << "Piatra: "     << player.getCantitateResursa("Piatra");
+    text.setCharacterSize(24);
+    text.setFillColor(color);
 
-    resourceText.setString(ss.str());
+    text.setPosition({x, y});
 
-    eraText.setString(player.getNumeEra());
-    
-    float textWidth = eraText.getLocalBounds().size.x;
-    eraText.setPosition({1280.f - textWidth - 20.f, 10.f});
+    text.setOutlineColor(sf::Color::Black);
+    text.setOutlineThickness(2.0f);
+}
 
-    turnText.setString("Turn: " + std::to_string(currentTurn));
+void Hud::onResurseSchimbate(int aur, int lemn, int mancare, int piatra) {
+    txtAur.setString("Aur: " + std::to_string(aur));
+    txtLemn.setString("Lemn: " + std::to_string(lemn));
+    txtMancare.setString("Mancare: " + std::to_string(mancare));
+    txtPiatra.setString("Piatra: " + std::to_string(piatra));
+}
+
+void Hud::update(const Jucator& player, int turn) {
+    txtEra.setString("Era: " + player.getNumeEra());
+    txtTurn.setString("Tura: " + std::to_string(turn));
 }
 
 void Hud::draw(sf::RenderWindow& window) {
+
+    sf::RectangleShape backgroundBar(sf::Vector2f(1920.f, 80.f));
+    backgroundBar.setFillColor(sf::Color(0, 0, 0, 150));
+    backgroundBar.setPosition({0, 0});
+
+    window.setView(window.getDefaultView());
     window.draw(backgroundBar);
-    window.draw(resourceText);
-    window.draw(eraText);
-    window.draw(turnText);
+
+    window.draw(txtAur);
+    window.draw(txtLemn);
+    window.draw(txtMancare);
+    window.draw(txtPiatra);
+    window.draw(txtEra);
+    window.draw(txtTurn);
 }

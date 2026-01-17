@@ -61,6 +61,9 @@ void ActionPanel::setSelection(Unitate* unitate, [[maybe_unused]] Jucator& playe
         addButton("Build Tower", 50, 150, 0, [onBuildRequest]() {
              if (onBuildRequest) onBuildRequest("Tower");
         });
+        addButton("Build Market", 50, 100, 150, [onBuildRequest]() {
+            if (onBuildRequest) onBuildRequest("Market");
+        });
     }
 }
 
