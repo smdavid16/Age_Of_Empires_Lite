@@ -6,6 +6,7 @@
 #include "Cazarma.h"
 #include "Ferma.h"
 #include "EntityFactory.h"
+#include "Piata.h"
 
 Jucator::Jucator(const std::string& n, int id) : nume(n), playerID(id) {
     // Resursele de baza

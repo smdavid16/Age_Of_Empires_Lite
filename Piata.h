@@ -1,38 +1,22 @@
-//
-// Created by David on 17/01/2026.
-//
-
 #ifndef OOP_PIATA_H
 #define OOP_PIATA_H
 
 #include "Cladire.h"
-#include <iostream>
+#include <iostream> // Putem scoate iostream de aici daca nu folosim cout in header
 
 class Piata : public Cladire {
 public:
-    Piata(const Pozitie& p, int id) : Cladire("Piata", p, 600, id) {}
+    Piata(const Pozitie& p, int id);
 
-    [[nodiscard]] Cladire* clone() const override {
-        return new Piata(*this);
-    }
+    [[nodiscard]] Cladire* clone() const override;
 
-    void actioneaza([[maybe_unused]] CampDeLupta& harta) override {
-        // Pasiv
-    }
+    void actioneaza(CampDeLupta& harta) override;
 
-    int produceMancare() const {
-        return 40; // O fermă dădea poate 10-20, Piața dă 40
-    }
-
-    int produceAur() const {
-        return 15; // Dă și un pic de aur bonus
-    }
+    int produceMancare() const;
+    int produceAur() const;
 
 protected:
-    void doAfisare(std::ostream& os) const override {
-        Cladire::doAfisare(os);
-        os << " [Comert]";
-    }
+    void doAfisare(std::ostream& os) const override;
 };
 
 #endif //OOP_PIATA_H
