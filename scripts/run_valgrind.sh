@@ -14,7 +14,6 @@ else
 fi
 
 run_valgrind() {
-    # remove --show-leak-kinds=all (and --track-origins=yes) if there are many leaks in external libs
     valgrind --leak-check=full \
              --show-leak-kinds=all \
              --track-origins=yes \
@@ -23,7 +22,6 @@ run_valgrind() {
              --suppressions=./scripts/valgrind-suppressions.supp \
              --error-exitcode=1 \
              ./"${BIN_DIR}"/"${EXECUTABLE_NAME}" &
-    #          --gen-suppressions=all \
     bash ./scripts/run_test.sh 25 4 8
 }
 

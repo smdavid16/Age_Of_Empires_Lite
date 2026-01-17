@@ -4,17 +4,7 @@ DEFAULT_BUILD_DIR="build"
 DEFAULT_BUILD_TYPE="Debug"
 DEFAULT_INSTALL_DIR="install_dir"
 
-# Pentru a folosi SFML local:
-# ./scripts/cmake.sh configure -e "-DFETCHCONTENT_BASE_DIR=~/.local/fetchcontent-deps -DFETCHCONTENT_SOURCE_DIR_SFML=~/.local/SFML"
-# sau
-# mkdir -p ~/.local/fetchcontent-deps
-# cd ~/.local && git clone --branch=3.0.2 https://github.com/SFML/SFML.git
-# export FETCHCONTENT_BASE_DIR=~/.local/fetchcontent-deps
-# export SFML3_DIR=~/.local/SFML
-
 configure() {
-    # cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
-    #
     BUILD_DIR="${DEFAULT_BUILD_DIR}"
     BUILD_TYPE="${DEFAULT_BUILD_TYPE}"
     INSTALL_DIR="${DEFAULT_INSTALL_DIR}"
@@ -56,8 +46,7 @@ configure() {
 }
 
 build() {
-    # cmake --build build --config Debug -j6
-    #
+
     BUILD_DIR="${DEFAULT_BUILD_DIR}"
     BUILD_TYPE="${DEFAULT_BUILD_TYPE}"
     NPROC=6
@@ -91,8 +80,7 @@ build() {
 }
 
 install() {
-    # cmake --install build --config Debug --prefix install_dir
-    #
+
     BUILD_DIR="${DEFAULT_BUILD_DIR}"
     BUILD_TYPE="${DEFAULT_BUILD_TYPE}"
     INSTALL_DIR="${DEFAULT_INSTALL_DIR}"
