@@ -1,14 +1,14 @@
 #include "Game.h"
 #include <iostream>
-#include <cmath> // Pentru std::abs daca e nevoie
+#include <cmath>
 
-#include "UnitatiConcrete.h"
+#include "Unitaticoncrete.h"
 #include "Ferma.h"
 #include "Turn.h"
 #include "Cazarma.h"
-#include "Piata.h"        // <--- Asigura-te ca ai acest header sau clasa Piata definita
+#include "Piata.h"
 #include "EntityFactory.h"
-#include "MathUtils.h"    // <--- Headerul cu functia template calculeazaDistanta
+#include "MathUtils.h"
 
 const float SCROLL_SPEED = 600.0f;
 
