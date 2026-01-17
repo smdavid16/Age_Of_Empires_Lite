@@ -6,21 +6,32 @@
 #define OOP_HUD_H
 
 #include <SFML/Graphics.hpp>
-#include <sstream>
+#include <iostream>
+#include <vector>
 #include "Jucator.h"
+#include "Observer.h" // <--- 1. Include obligatoriu
 
-class Hud {
+class Hud : public IObserver {
 private:
     sf::Font font;
-    sf::Text resourceText;
-    sf::Text eraText;
-    sf::Text turnText;
-    sf::RectangleShape backgroundBar;
+
+    sf::Text txtAur;
+    sf::Text txtLemn;
+    sf::Text txtMancare;
+    sf::Text txtPiatra;
+
+    sf::Text txtEra;
+    sf::Text txtTurn;
+
+    // Helper pentru inițializarea unui text
+    void initText(sf::Text& text, float x, float y, sf::Color color);
 
 public:
     Hud();
 
-    void update(const Jucator& player, int currenTurn);
+    void onResurseSchimbate(int aur, int lemn, int mancare, int piatra) override;
+
+    void update(const Jucator& player, int turn);
 
     void draw(sf::RenderWindow& window);
 };

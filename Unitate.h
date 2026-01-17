@@ -50,7 +50,7 @@ public:
     [[nodiscard]] int getPozX() const { return poz.getX(); }
     [[nodiscard]] int getPozY() const { return poz.getY(); }
     [[nodiscard]] const std::string& getNume() const { return nume; }
-    [[nodiscard]] int getHp() const { return hp; }
+    [[nodiscard]] int getHPCurent() const { return hp; }
     [[nodiscard]] int getHpMax() const { return hpMax; }
     [[nodiscard]] int getOwnerID() const { return ownerID; }
 

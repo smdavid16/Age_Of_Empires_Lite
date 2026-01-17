@@ -5,9 +5,10 @@
 #include "Turn.h"
 #include "Cazarma.h"
 #include "Ferma.h"
+#include "EntityFactory.h"
 
 Jucator::Jucator(const std::string& n, int id) : nume(n), playerID(id) {
-    // Resursele de baza a fiecarui jucator
+    // Resursele de baza
     adaugaResursa("Aur", 100);
     adaugaResursa("Lemn", 100);
     adaugaResursa("Mancare", 100);
@@ -34,14 +35,12 @@ std::vector<Resursa> Jucator::getCostAvansare() const {
     }
     return cost;
 }
-
 bool Jucator::verificaConditiiAvansare() const {
     if (eraCurenta.getNumeEra() == NumeEra::IMPERIAL_AGE) {
         std::cout << "Deja esti in Era Imperiala!\n";
         return false;
     }
 
-    // verifica resurse pt avansare
     std::vector<Resursa> costuri = getCostAvansare();
     bool resurseSuficiente = true;
 
@@ -54,11 +53,10 @@ bool Jucator::verificaConditiiAvansare() const {
 
     if (!resurseSuficiente) return false;
 
-    //verificare cladiri de care ai nevoie pt avansare
     bool hasBarracks = false;
     bool hasMarket = false;
 
-    for (const auto& c : cladiri) {
+    for (const auto& c : managerCladiri.getToate()) {
         if (c->getNume() == "Cazarma") hasBarracks = true;
         if (c->getNume() == "Piata") hasMarket = true;
     }
@@ -72,14 +70,23 @@ bool Jucator::verificaConditiiAvansare() const {
         std::cout << "Ai nevoie de o Piata pentru a avansa in Castle!\n";
         return false;
     }
-
     return true;
 }
 
 void Jucator::consumaResursa(const std::string& numeResursa, int cantitate) {
     for (auto& r : inventar) {
         if (r.getNume() == numeResursa) {
+            if (r.getCantitate() < cantitate) {
+                throw std::runtime_error("Resurse insuficiente: " + numeResursa);
+            }
             r.consuma(cantitate);
+            // NOTIFICARE OBSERVER (HUD)
+            notificaResurse(
+                getCantitateResursa("Aur"),
+                getCantitateResursa("Lemn"),
+                getCantitateResursa("Mancare"),
+                getCantitateResursa("Piatra")
+            );;
             return;
         }
     }
@@ -87,20 +94,15 @@ void Jucator::consumaResursa(const std::string& numeResursa, int cantitate) {
 
 void Jucator::avansareEra() {
     if (verificaConditiiAvansare()) {
-        // consumarea resurselor
         std::vector<Resursa> costuri = getCostAvansare();
         for (const auto& cost : costuri) {
             consumaResursa(cost.getNume(), cost.getCantitate());
         }
 
-        // Avansarea efectiva a erei
         eraCurenta.treciLaUrmatoarea();
+        std::cout << "\n*** FELICITARI! Ai avansat in " << eraCurenta.getNumeAfisat() << "! ***\n";
 
-        std::cout << "\n************************************************\n";
-        std::cout << "FELICITARI! Ai avansat in " << eraCurenta.getNumeAfisat() << "!\n";
-        std::cout << "************************************************\n";
-
-        for (auto& unitate : unitati) {
+        for (auto& unitate : managerUnitati.getToate()) {
             unitate->buffStats(10);
             std::cout << "Unitatea " << unitate->getNume() << " a primit upgrade de era.\n";
         }
@@ -109,45 +111,42 @@ void Jucator::avansareEra() {
     }
 }
 
-
 void Jucator::adaugaCladire(std::shared_ptr<Cladire> c) {
-    cladiri.push_back(c);
-    
+    managerCladiri.adauga(c);
 }
 
 void Jucator::adaugaUnitate(std::shared_ptr<Unitate> u) {
-    unitati.push_back(u);
+    managerUnitati.adauga(u);
 }
-
-
 
 void Jucator::joacaTura(CampDeLupta& harta, Jucator& inamic) {
     std::cout << "\n=== Tura lui " << nume << " (Echipa " << playerID << ") ===\n";
 
-    // logica pentru fiecare tura a jocului, cladirile isi joaca rolul, la fel si unitatile
-    for (auto& c : cladiri) {
+    for (auto& c : managerCladiri.getToate()) {
         if (!c->esteDistrusa()) {
             c->actioneaza(harta);
         }
     }
 
-    auto& inamici = inamic.getUnitatiMutable();
 
-    for (auto& u : unitati) {
+    auto inamici = inamic.getUnitati();
+
+
+    auto& inamiciMutable = const_cast<std::vector<std::shared_ptr<Unitate>>&>(inamici);
+
+    for (auto& u : managerUnitati.getToate()) {
         if (u->esteVie()) {
-            u->actioneaza(harta, *this, inamici);
+            u->actioneaza(harta, *this, inamiciMutable);
         }
     }
-    curataMorti();
+
+    updateStatusEntitati();
 }
-
-
 
 void Jucator::colecteazaProductia() {
     std::cout << "Se colecteaza resursele din cladiri...\n";
 
-    for (auto& c : cladiri) {
-
+    for (auto& c : managerCladiri.getToate()) {
         if (auto ferma = std::dynamic_pointer_cast<Ferma>(c)) {
             int mancare = ferma->colecteazaResurse();
             if (mancare > 0) {
@@ -155,37 +154,41 @@ void Jucator::colecteazaProductia() {
                 std::cout << " -> Colectat " << mancare << " mancare de la o ferma.\n";
             }
         }
+        else if (auto piata = std::dynamic_pointer_cast<Piata>(c)) {
+            int mancareExtra = piata->produceMancare();
+            int aurExtra = piata->produceAur();
+
+            adaugaResursa("Mancare", mancareExtra);
+            adaugaResursa("Aur", aurExtra);
+
+            std::cout << " -> [Piata] + " << mancareExtra << " Mancare si + " << aurExtra << " Aur.\n";
+        }
     }
 }
-
-
-void Jucator::curataMorti() {
-    auto it_c = std::remove_if(cladiri.begin(), cladiri.end(),
-        [](const std::shared_ptr<Cladire>& c) { return c->esteDistrusa(); });
-
-    if (it_c != cladiri.end()) {
-        std::cout << "Eliminare cladiri distruse...\n";
-        cladiri.erase(it_c, cladiri.end());
-    }
-
-    auto it_u = std::remove_if(unitati.begin(), unitati.end(),
-        [](const std::shared_ptr<Unitate>& u) { return !u->esteVie(); });
-
-    if (it_u != unitati.end()) {
-        std::cout << "Eliminare unitati moarte...\n";
-        unitati.erase(it_u, unitati.end());
-    }
-}
-
 
 void Jucator::adaugaResursa(const std::string& numeRes, int cantitate) {
+    bool found = false;
     for (auto& r : inventar) {
         if (r.getNume() == numeRes) {
             r.adauga(cantitate);
-            return;
+            found = true;
+            break;
         }
     }
-    inventar.emplace_back(numeRes, cantitate);
+    if(!found) {
+        inventar.emplace_back(numeRes, cantitate);
+    }
+
+    notificaResurse(
+        getCantitateResursa("Aur"),
+        getCantitateResursa("Lemn"),
+        getCantitateResursa("Mancare"),
+        getCantitateResursa("Piatra")
+    );
+}
+
+std::string Jucator::getNumeEra() const {
+    return eraCurenta.getNumeAfisat();
 }
 
 int Jucator::getCantitateResursa(const std::string& numeRes) const {
@@ -203,8 +206,8 @@ void Jucator::afiseazaStatus() const {
         std::cout << r.getNume() << ": " << r.getCantitate() << " ";
     }
     std::cout << "]\n";
-    std::cout << "  Armata: " << unitati.size() << " unitati\n";
-    std::cout << "  Cladiri: " << cladiri.size() << " structuri\n";
+    std::cout << "  Armata: " << managerUnitati.getToate().size() << " unitati\n";
+    std::cout << "  Cladiri: " << managerCladiri.getToate().size() << " structuri\n";
 }
 
 std::ostream& operator<<(std::ostream& os, const Jucator& j) {
@@ -218,12 +221,14 @@ void Jucator::savePlayer(std::ofstream& file) const {
          << getCantitateResursa("Mancare") << " "
          << getCantitateResursa("Piatra") << "\n";
 
+    const auto& unitati = managerUnitati.getToate();
     file << unitati.size() << "\n";
     for (const auto& u : unitati) {
         file << u->getNume() << " " << u->getPozX() << " " << u->getPozY()
-             << " " << u->getHp() << " " << u->getOwnerID() << "\n";
+             << " " << u->getHPCurent() << " " << u->getOwnerID() << "\n";
     }
 
+    const auto& cladiri = managerCladiri.getToate();
     file << cladiri.size() << "\n";
     for (const auto& c : cladiri) {
         file << c->getNume() << " " << c->getPozX() << " " << c->getPozY()
@@ -247,18 +252,15 @@ void Jucator::loadPlayer(std::ifstream& file) {
         int x, y, hp, owner;
         file >> name >> x >> y >> hp >> owner;
 
-        std::shared_ptr<Unitate> u = nullptr;
-
-        if (name == "Muncitor") u = std::make_shared<Muncitor>(Pozitie(x, y), owner);
-        else if (name == "Arcas") u = std::make_shared<Arcas>(Pozitie(x, y), owner);
-        else if (name == "Spadasin") u = std::make_shared<Spadasin>(Pozitie(x, y), owner);
-        else if (name == "Cavaler") u = std::make_shared<Cavaler>(Pozitie(x, y), owner);
+        std::shared_ptr<Unitate> u = EntityFactory::createUnitate(name, Pozitie(x, y), owner);
 
         if (u) {
             int damageToTake = u->getHpMax() - hp;
-            if(damageToTake > 0) u->primesteDaune(damageToTake);
-            unitati.push_back(u);
+            if (damageToTake > 0) u->primesteDaune(damageToTake);
+
+            managerUnitati.adauga(u);
         }
+
     }
 
     int numBuildings;
@@ -268,20 +270,13 @@ void Jucator::loadPlayer(std::ifstream& file) {
         int x, y, hp, owner;
         file >> name >> x >> y >> hp >> owner;
 
-        std::shared_ptr<Cladire> c = nullptr;
-
-        if (name == "Ferma") c = std::make_shared<Ferma>(Pozitie(x, y), owner);
-        else if (name == "Turn") c = std::make_shared<Turn>(Pozitie(x, y), owner);
-        else if (name == "Cazarma") c = std::make_shared<Cazarma>(Pozitie(x, y), owner);
+        std::shared_ptr<Cladire> c = EntityFactory::createCladire(name, Pozitie(x, y), owner);
 
         if (c) {
             int damageToTake = c->getHPMaxim() - hp;
-            if(damageToTake > 0) c->primesteDaune(damageToTake);
-            cladiri.push_back(c);
+            if (damageToTake > 0) c->primesteDaune(damageToTake);
+
+            managerCladiri.adauga(c);
         }
     }
-}
-
-std::string Jucator::getNumeEra() const {
-    return eraCurenta.getNumeAfisat();
 }

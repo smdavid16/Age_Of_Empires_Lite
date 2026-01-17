@@ -91,6 +91,16 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         ActionPanel.cpp
         ActionPanel.h
         Unitaticoncrete.cpp
+        MathUtils.cpp
+        MathUtils.h
+        EntityFactory.cpp
+        EntityFactory.h
+        ManagerEntitati.cpp
+        ManagerEntitati.h
+        Observer.cpp
+        Observer.h
+        Piata.cpp
+        Piata.h
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
